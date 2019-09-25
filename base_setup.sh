@@ -48,9 +48,9 @@ if [ "$mode" == "unstack" ] || [ "$mode" == "clear" ] || [ "$mode" == "init" ] |
   su -l stack -c "/opt/stack/devstack/unstack.sh"
 fi
 if [ "$mode" == "clear" ] || [ "$mode" == "init" ]; then
-  su -l stack "/opt/stack/devstack/clear.sh"
+  su -l stack -c "/opt/stack/devstack/clear.sh"
 fi
 if [ "$mode" == "stack" ] || [ "$mode" == "clear" ] || [ "$mode" == "init" ] || [ "$mode" == "stack" ]; then
-  su -l stack "/opt/stack/devstack/stack.sh"
+  su -l stack -c "/opt/stack/devstack/stack.sh"
 fi
 
