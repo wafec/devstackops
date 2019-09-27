@@ -33,7 +33,7 @@ sudo apt install git -y
 sudo rm -f /etc/sudoers.d/stack
 echo "stack ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/stack
 branchfile=$(echo "$branch" | sed -e "s/\//-/g")
-if [ -d "/opt/stack/devstack" ] && [ ! -f "$/opt/stack/devstack/branchfile" ]; then
+if [ -d "/opt/stack/devstack" ] && [ ! -f "/opt/stack/devstack/$branchfile" ]; then
   sudo rm -fr /opt/stack/devstack
   echo "/opt/stack/devstack removed"
 fi
