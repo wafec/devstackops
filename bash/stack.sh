@@ -1,12 +1,26 @@
 #!/bin/bash
 
 NUMBER_RE='^[0-9]+$'
-if [[ "$#" -ne 1 ]] || [[ ! "$1" =~ $NUMBER_RE ]]; then
+if [[ "$#" -gt 2 ]] || [[ ! "$1" =~ $NUMBER_RE ]]; then
     echo "Invalid arguments"
     exit
 fi
 
 HOST=$1
+
+if [[ "$1" -gt "20" ]] && [[ "$#" -eq 2 ]]; then
+    if [[ "$2" =~ $NUMBER_RE ]]; then
+        SERVICE_HOST=$2
+    else
+        echo "Invalid arguments"
+        exit
+    fi
+else
+    if [[ ! "$#" -eq 1 ]]; then
+        echo "Invalid arguments"
+        exit
+    fi
+fi
 
 stack_compute() {
     source compute.sh $HOST
