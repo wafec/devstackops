@@ -1,7 +1,7 @@
 #!/bin/bash
 
 create_branch_directory() {
-    su -l $USER_NAME -c "mkdir $USER_HOME/$DEVSTACK_BRANCH"
+    su -l $USER_NAME -c "mkdir -p $USER_HOME/$DEVSTACK_BRANCH"
 }
 
 clone_project() {

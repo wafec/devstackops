@@ -19,3 +19,7 @@ get_conf_file() {
 get_devstack() {
     echo "$USER_HOME/$DEVSTACK_BRANCH/devstack"
 }
+
+get_dest() {
+    echo "$USER_HOME/$DEVSTACK_BRANCH"
+}

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 CONF_FILE=$(get_conf_file)
+DEST=$(get_dest)
 
 if [ -f "$CONF_FILE" ]; then
     su -l $USER_NAME -c "rm $CONF_FILE"
@@ -16,6 +17,7 @@ su -l $USER_NAME -c "echo \"ADMIN_PASSWORD=$ADMIN_PASSWORD\" >> $CONF_FILE"
 su -l $USER_NAME -c "echo \"DATABASE_PASSWORD=$SUPER_PASSWORD\" >> $CONF_FILE"
 su -l $USER_NAME -c "echo \"RABBIT_PASSWORD=$SUPER_PASSWORD\" >> $CONF_FILE"
 su -l $USER_NAME -c "echo \"SERVICE_PASSWORD=$SUPER_PASSWORD\" >> $CONF_FILE"
+su -l $USER_NAME -c "echo \"DEST=$DEST\" >> $CONF_FILE"
 
 DEVSTACK=$(get_devstack)
 

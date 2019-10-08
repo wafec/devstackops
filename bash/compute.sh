@@ -2,6 +2,7 @@
 
 COMPUTE_HOST=$1
 CONF_FILE=$(get_conf_file)
+DEST=$(get_dest)
 
 if [ -f $CONF_FILE ]; then
     su -l $USER_NAME -c "rm $CONF_FILE"
@@ -27,3 +28,4 @@ su -l $USER_NAME -c "echo \"NOVA_VNC_ENABLED=True\" >> $CONF_FILE"
 su -l $USER_NAME -c "echo \"NOVNCPROXY_URL=\\\"http://\$SERVICE_HOST:6080/vnc_lite.html\\\"\" >> $CONF_FILE"
 su -l $USER_NAME -c "echo \"VNCSERVER_LISTEN=\$HOST_IP\" >> $CONF_FILE"
 su -l $USER_NAME -c "echo \"VNCSERVER_PROXYCLIENT_ADDRESS=\$VNCSERVER_LISTEN\" >> $CONF_FILE"
+su -l $USER_NAME -c "echo \"DEST=$DEST\" >> $CONF_FILE"
