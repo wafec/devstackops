@@ -1,8 +1,7 @@
 #!/bin/bash
 
 COMPUTE_HOST=$1
-get_conf_file()
-CONF_FILE=$?
+CONF_FILE=$(get_conf_file)
 
 if [ -f $CONF_FILE ]; then
     su -l $USER_NAME -c "rm $CONF_FILE"

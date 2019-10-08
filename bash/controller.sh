@@ -1,7 +1,6 @@
 #!/bin/bash
 
-get_conf_file()
-CONF_FILE=$?
+CONF_FILE=$(get_conf_file)
 
 if [ -f "$CONF_FILE" ]; then
     su -l $USER_NAME -c "rm $CONF_FILE"
@@ -18,8 +17,7 @@ su -l $USER_NAME -c "echo \"DATABASE_PASSWORD=$SUPER_PASSWORD\" >> $CONF_FILE"
 su -l $USER_NAME -c "echo \"RABBIT_PASSWORD=$SUPER_PASSWORD\" >> $CONF_FILE"
 su -l $USER_NAME -c "echo \"SERVICE_PASSWORD=$SUPER_PASSWORD\" >> $CONF_FILE"
 
-get_devstack()
-DEVSTACK=$?
+DEVSTACK=$(get_devstack)
 
 if [ -f "$DEVSTACK/local.sh.bkp" ]; then
     su -l $USER_NAME -c "rm $DEVSTACK/local.sh"
