@@ -24,7 +24,7 @@ source clone.sh
 
 if [ "$HOST" -gt "20" ]; then
     stack_compute
-elif [[ "$HOST" -gt "11" ]] && [[ "$HOST" -lt "20" ]]; then
+elif [[ "$HOST" -gt "10" ]] && [[ "$HOST" -lt "20" ]]; then
     stack_controller
 else
     echo "Invalid host"
