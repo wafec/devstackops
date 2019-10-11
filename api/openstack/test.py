@@ -5,12 +5,12 @@ from openstack.compute import *
 import os
 
 
-UBUNTU_IMG = 'ubuntu-16.04-server-cloudimg-amd64-disk1.img'
+UBUNTU_IMG = 'cirros-0.4.0-x86_64-disk.img'
 
 
-def _test_get_cloud_resource(name):
+def _test_get_data_resource(name):
     root_dir = os.path.dirname(os.path.abspath(__file__))
-    return os.path.join(root_dir, '../cloud/' + name)
+    return os.path.join(root_dir, '../data/' + name)
 
 
 def _test_default_error_callback(http_err, response):
@@ -76,7 +76,7 @@ def test_image_upload():
     config = _test_identity_token()
     _test_image_clear(config)
     img_result = _test_image_create(config, 'Ubuntu', container_format='bare', disk_format='qcow2')
-    file_result = image_upload_file(config, img_result['id'], _test_get_cloud_resource(UBUNTU_IMG))
+    file_result = image_upload_file(config, img_result['id'], _test_get_data_resource(UBUNTU_IMG))
     assert(file_result is not None)
     print('File', UBUNTU_IMG, 'Uploaded')
     _test_image_delete(config, img_result['id'])
@@ -87,7 +87,7 @@ def test_image_list():
     config = _test_identity_token()
     _test_image_clear(config)
     img_result = _test_image_create(config)
-    image_upload_file(config, img_result["id"], _test_get_cloud_resource(UBUNTU_IMG))
+    image_upload_file(config, img_result["id"], _test_get_data_resource(UBUNTU_IMG))
     list = image_list(config, error_callback=_test_default_error_callback)
     assert(list is not None)
     _test_image_clear(config)
@@ -169,7 +169,7 @@ def test_server_create():
     _test_compute_server_clear(config)
     _test_flavor_clear(config)
     image = _test_image_create(config)
-    image_upload_file(config, image['id'], file_path=_test_get_cloud_resource(UBUNTU_IMG))
+    image_upload_file(config, image['id'], file_path=_test_get_data_resource(UBUNTU_IMG))
     flavor = _test_flavor_create(config)
     server = _test_compute_server_create(config, image_ref=image['id'], flavor_ref=flavor['flavor']['id'],
                                          name='Test Server', error_callback=_test_default_error_callback)
