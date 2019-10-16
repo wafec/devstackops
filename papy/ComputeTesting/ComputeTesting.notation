@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.2/notation" xmlns:style="http://www.eclipse.org/papyrus/infra/gmfdiag/style" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_iuLVIO-jEemi9_kxtCAKhg" type="PapyrusUMLClassDiagram" name="ComputeTestingPackages" measurementUnit="Pixel">
+  <children xmi:type="notation:Shape" xmi:id="_6Jc6ge-oEemi9_kxtCAKhg" type="Package_Shape">
+    <children xmi:type="notation:DecorationNode" xmi:id="_6Jc6g--oEemi9_kxtCAKhg" type="Package_NameLabel"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_6Jc6hO-oEemi9_kxtCAKhg" type="Package_PackagedElementCompartment">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_6Jc6he-oEemi9_kxtCAKhg"/>
+      <layoutConstraint xmi:type="notation:Bounds" xmi:id="_6Jc6hu-oEemi9_kxtCAKhg"/>
+    </children>
+    <element xmi:type="uml:Package" href="ComputeTesting.uml#_6Jc6gO-oEemi9_kxtCAKhg"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_6Jc6gu-oEemi9_kxtCAKhg" x="140" y="60" width="541" height="281"/>
+  </children>
+  <styles xmi:type="notation:StringValueStyle" xmi:id="_iuLVIe-jEemi9_kxtCAKhg" name="diagram_compatibility_version" stringValue="1.4.0"/>
+  <styles xmi:type="notation:DiagramStyle" xmi:id="_iuLVIu-jEemi9_kxtCAKhg"/>
+  <styles xmi:type="style:PapyrusDiagramStyle" xmi:id="_iuLVI--jEemi9_kxtCAKhg" diagramKindId="org.eclipse.papyrus.uml.diagram.package">
+    <owner xmi:type="uml:Model" href="ComputeTesting.uml#_Zdl6kO-jEemi9_kxtCAKhg"/>
+  </styles>
+  <element xmi:type="uml:Model" href="ComputeTesting.uml#_Zdl6kO-jEemi9_kxtCAKhg"/>
+</notation:Diagram>
