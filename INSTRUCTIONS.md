@@ -8,3 +8,4 @@ To start testing OpenStack we need some steps to go before. So, this guide docum
 
 ### Understanding the Environment 
 
+We are using a machine with 22GB RAM and a SSD with 480GB. We created an Ubuntu 18.04 LTS instance as the base for the creation of the others instances we need for our tests. Controller instance we set with 8GB RAM and 2 processors, 2 Compute hosts with 4GB RAM each and 2 processors, and a client virtual machine with 2GB and 2 processors. Of course, the physical machine where these virtual machines are on haven't 8 processors. VirtualBox was used to create the virtual machines, and it virtualizes the resources, the storage, RAM and processors. Virtual machines were connected using a virtual network created by virtual box and all were connected to the internet. 
