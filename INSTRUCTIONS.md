@@ -1,3 +1,3 @@
-## Devstack Steps Before Testing
+## Helpers for Testing OpenStack using Devstack
 
 ### Understanding the Environment 
