@@ -79,7 +79,7 @@ class QueueBind(BaseQueueAction):
         )
 
 
-parameters = pika.ConnectionParameters('localhost')
+parameters = pika.ConnectionParameters('amqp://stackrabbit:supersecret@localhost:5672/')
 connection = pika.BlockingConnection(parameters)
 channel = connection.channel()
 
