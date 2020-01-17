@@ -18,18 +18,19 @@ with open('./data/names') as names_file:
         binding_instances.append(binding_instance)
 
 
-def is_binding_instance_worthy(binding_instance):
+def is_binding_instance_allowed(binding_instance):
     return binding_instance["destination_kind"] == 'queue' and binding_instance["source_kind"] == 'exchange' and\
-           binding_instance["source_name"]
+           binding_instance["source_name"] and not binding_instance["destination_name"].endswith("-bridge") and\
+           not binding_instance["routing_key"].endswith("-origin")
 
 
-binding_instances = [instance for instance in binding_instances if is_binding_instance_worthy(instance)]
+binding_instances = [instance for instance in binding_instances if is_binding_instance_allowed(instance)]
 
-credentials = pika.PlainCredentials('stackrabbit', 'supersecret')
+credentials = pika.PlainCredentials(os.environ["RABBIT_USER"], os.environ["RABBIT_PASS"])
 parameters = pika.ConnectionParameters(
-    'localhost',
-    5672,
-    '/',
+    os.environ["RABBIT_HOST"],
+    os.environ["RABBIT_PORT"],
+    os.environ["RABBIT_VHOST"],
     credentials
 )
 connection = pika.BlockingConnection(parameters)
