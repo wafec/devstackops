@@ -7,3 +7,6 @@ User *stackrabbit* is the default user on Devstack. The *devstack-installation* 
 2. ./bindings.sh
 3. ./names.py
 4. ./builder.py
+5. ./bindings.sh
+6. ./names.py
+7. ./interceptor.py
