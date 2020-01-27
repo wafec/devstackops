@@ -3,6 +3,7 @@ import multiprocessing
 from flask import Flask, request
 from flask_restful import Api, Resource
 import time
+import rabbitmq
 
 
 class Message(object):
@@ -48,13 +49,11 @@ class TestSuiteExecution(threading.Thread):
                 print('execution waiting states completion')
                 self._test_handler.execution_cv.wait()
             with self._test_handler.execution_cv:
-                self._test_handler.status = TestHandler.STARTED
+                self._test_handler.status = TestHandler.STARTED if test != self._test_handler.tests[-1] else TestHandler.STOPPED
                 self._test_handler.execution_cv.notifyAll()
-        self._test_handler.status = TestHandler.STOPPED
         print('test-execution finished')
         with self._test_handler.completion_cv:
             self._test_handler.completion_cv.notifyAll()
-                
 
 
 class StateMonitor(threading.Thread):
@@ -103,6 +102,8 @@ class MessageMonitor(threading.Thread):
 
 
 if __name__ == '__main__':
+    rabbitmq.falsify_bindings('localhost', 'admin', 'supersecret')
+
     test_handler = TestHandler([1, 2, 3, 4, 5])
     test_execution = TestSuiteExecution(test_handler)
     state_monitor = StateMonitor(test_handler)
