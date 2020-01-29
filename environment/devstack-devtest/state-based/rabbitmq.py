@@ -1,6 +1,8 @@
 import requests
 import pika
 import json
+import multiprocessing
+import threading
 
 
 WILDCARD = 'test-'
@@ -52,5 +54,61 @@ def falsify_bindings(host, user, passwd):
                 channel.queue_bind(test_queue_name, source, key)
                 channel.queue_bind(destination, source, test_key_name)
         _assert_falsification(host, user, passwd)
+        return True
+    return False
+
+
+class MessageArrivedHandler(multiprocessing.Process):
+    def __init__(self, binding, connection_props, mapi_port):
+        super(MessageArrivedHandler, self).__init__()
+        self._binding = binding
+        self._connection_props = connection_props
+        self._connection = _create_connection(connection_props['host'], connection_props['user'], connection_props['passwd'])
+        self._mapi_port = mapi_port
+        self._temp_queue, self._key, self._exchange = (binding['destination'], binding['routing_key'], binding['source'])
+        self._queue = self._temp_queue[len(WILDCARD):]
+        self._temp_key = '%s%s' % (WILDCARD, self._key)
+
+    def run(self):
+        channel = self._connection.channel()
+        channel.queue_declare(self._temp_queue)
+        print('consuming queue %s' % self._temp_queue)
+        channel.basic_consume(self._temp_queue, self._on_message_arrived)
+
+    def _on_message_arrived(self, channel, method_frame, header_frame, body):
+        data = { body: body }
+        res = requests.post('http://localhost:%d/messages' % self._mapi_port, json=data)
+        if res.status_code == 200:
+            body = res.json['body']
+        channel = self._connection.channel()
+        channel.queue_declare(self._queue)
+        channel.basic_publish(queue=self._queue, exchange=self._exchange, routing_key=self._temp_key, body=body)
+        channel.basic_ack(delivery_tag=method_frame.delivery_tag)
+
+
+def _start_binding_falsified_queues(bindings, host, user, passwd, sync_ev, termination_ev, mapi_port):
+    handlers = []
+    for binding in bindings:
+        handler = MessageArrivedHandler(binding, { 'host': host, 'user': user, 'passwd': passwd }, mapi_port)
+        handler.start()
+        handlers.append(handler)
+    sync_ev.set()
+    termination_ev.wait()
+    for handler in handlers:
+        handler.terminate()
+        handler.join()
+    print('binding to falsification finished')
+
+
+
+def bind_to_falsified_queues(host, user, passwd, termination_ev, mapi_port):
+    res = requests.get('http://%s:15672/api/bindings' % (host), auth=(user, passwd))
+    if res.status_code:
+        bindings = json.loads(res.content)
+        bindings = [binding for binding in bindings if binding['destination'].startswith(WILDCARD)]
+        sync_ev = threading.Event()
+        handler = threading.Thread(target=_start_binding_falsified_queues, args=(bindings, host, user, passwd, sync_ev, termination_ev, mapi_port))
+        handler.start()
+        sync_ev.wait()
         return True
     return False

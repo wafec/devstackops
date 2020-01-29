@@ -1,0 +1,6 @@
+pika
+sqlalchemy
+flask
+flask-restful
+flask-script
+requests
