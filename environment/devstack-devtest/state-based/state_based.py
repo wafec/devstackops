@@ -5,13 +5,20 @@ from flask_restful import Api, Resource
 import time
 import rabbitmq
 import requests
-import sys, traceback
+import sys
+import traceback
 
 
 class Message(object):
     def __init__(self, name, fields):
-        self._name = name
-        self._fields = fields
+        self.name = name
+        self.fields = fields
+
+
+class Arg(object):
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value
 
 
 class TestCase(object):
@@ -34,6 +41,14 @@ class TestCase(object):
     def func(self, func):
         self._func = func
         time.sleep(1)
+
+    @property
+    def event(self):
+        return self._event
+
+    @property
+    def args(self):
+        return self._args
 
 
 class TestHandler(object):
