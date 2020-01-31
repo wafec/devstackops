@@ -7,6 +7,8 @@ import rabbitmq
 import requests
 import sys
 import traceback
+import yaml
+import os
 
 
 class Message(object):
@@ -21,11 +23,11 @@ class Arg(object):
         self.value = value
 
 
-class TestCase(object):
+class TestEntry(object):
     def __init__(self, event, args=None, messages=None, func=None):
         self._event = event
-        self._args = args
-        self._messages = messages
+        self._args = args if args else []
+        self._messages = messages if messages else []
         self._func = func
 
     def _func_undefined(self):
@@ -49,6 +51,24 @@ class TestCase(object):
     @property
     def args(self):
         return self._args
+
+    @property
+    def messages(self):
+        return self._messages
+
+
+def tests_from_file(filepath):
+    if os.path.exists(filepath):
+        with open(filepath, 'r') as tests_file:
+            tests = yaml.load(tests_file, Loader=yaml.FullLoader)
+        test_case = []
+        for test in tests['test-case']:
+            test_entry = TestEntry(test['event'])
+            for arg in test['args']:
+                test_entry.args.append(Arg(arg['name'], arg['value']))
+            test_case.append(test_entry)
+        return test_case
+    return None
 
 
 class TestHandler(object):
@@ -170,7 +190,7 @@ class MessageMonitor(threading.Thread):
         print('message-monitor terminated')
 
 
-def assert_message_monitor_is_active(port, attempts=10):
+def wait_for_message_monitor_api(port, attempts=10):
     is_active = None
     try:
         res = requests.get('http://localhost:%s/messages' % port, timeout=10)
@@ -181,44 +201,63 @@ def assert_message_monitor_is_active(port, attempts=10):
             if not attempts:
                 print('message-monitor-api status code  %s' % res.status_code)
     except:
-        if (not attempts):
+        if not attempts:
             traceback.print_exc(file=sys.stdout)
         if not attempts:
-            print('oops! an exception occurred trying to assert whether message-monitor-api is active')
+            print('oops! an exception occurred on asserting message-monitor-api was active')
         is_active = False
     if attempts and not is_active:
         time.sleep(0.5)
-        is_active = assert_message_monitor_is_active(port, attempts - 1)
+        is_active = wait_for_message_monitor_api(port, attempts - 1)
     return is_active
 
 
+def test_tests(tests, opts_or_file=None, profile=None):
+    if not opts_or_file or isinstance(opts_or_file, str):
+        opts_or_file = 'tests.yaml' if not opts_or_file else opts_or_file
+        if os.path.exists(opts_or_file):
+            with open(opts_or_file, 'r') as tests_yaml_file:
+                opts_or_file = yaml.load(tests_yaml_file, Loader=yaml.FullLoader)
+            if 'tests' in opts_or_file:
+                opts_or_file = opts_or_file['tests']
+                if profile:
+                    opts_or_file = opts_or_file[profile]
+                else:
+                    opts_or_file = None
+            else:
+                opts_or_file = None
+    if not opts_or_file:
+        raise ValueError('opts_or_file is invalid')
+
+    rmq_host, rmq_user, rmq_passwd = (opts_or_file['rabbitmq']['host'], opts_or_file['rabbitmq']['user'], opts_or_file['rabbitmq']['passwd'])
+    message_api_port = opts_or_file['message-api']['port']
+
+    falsification_completed = rabbitmq.falsify_bindings(rmq_host, rmq_user, rmq_passwd)
+    if falsification_completed:
+        termination_ev = threading.Event()
+        rabbitmq.bind_to_falsified_queues(rmq_host, rmq_user, rmq_passwd, termination_ev, message_api_port)
+
+        test_handler = TestHandler(tests)
+        test_execution = TestSuiteExecution(test_handler)
+        state_monitor = StateMonitor(test_handler)
+        message_monitor = MessageMonitor(test_handler, message_api_port)
+
+        message_monitor.start()
+        message_api_active = wait_for_message_monitor_api(message_api_port)
+        if not message_api_active:
+            with test_handler.completion_cv.notify():
+                test_handler.completion_cv.notify()
+        if message_api_active:
+            test_execution.start()
+            state_monitor.start()
+            test_execution.join()
+            state_monitor.join()
+        message_monitor.join()
+        termination_ev.set()
+        print('tests completed')
+
+
 if __name__ == '__main__':
-    host, user, passwd = ('localhost', 'admin', 'supersecret')
-    mapi_port = 5064
-    termination_ev = threading.Event()
-    rabbitmq.falsify_bindings(host, user, passwd)
-    rabbitmq.bind_to_falsified_queues(host, user, passwd, termination_ev, mapi_port)
+    tests = [TestEntry('create'), TestEntry('build'), TestEntry('stop')]
 
-    tests = [TestCase('create'), TestCase('build'), TestCase('stop')]
-
-    test_handler = TestHandler(tests)
-    test_execution = TestSuiteExecution(test_handler)
-    state_monitor = StateMonitor(test_handler)
-    message_monitor = MessageMonitor(test_handler, mapi_port)
-
-    message_monitor.start()
-    is_message_monitor_active = assert_message_monitor_is_active(mapi_port)
-    if not is_message_monitor_active:
-        with test_handler.completion_cv:
-            test_handler.completion_cv.notify()
-    if is_message_monitor_active:
-        test_execution.start()
-        state_monitor.start()
-
-        test_execution.join()
-        state_monitor.join()
-    message_monitor.join()
-
-    termination_ev.set()
-
-    print('tests completed')
+    test_tests(tests, profile='development')

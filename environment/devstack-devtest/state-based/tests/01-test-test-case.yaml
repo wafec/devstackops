@@ -1,0 +1,17 @@
+test-case:
+  - event: compute.create_flavor
+    args:
+      - name: name
+        value: test
+      - name: ram
+        value: 512
+      - name: vcpus
+        value: 1
+      - name: disk
+        value: 0
+  - event: image.create_image
+    args:
+      - name: name
+        value: test
+      - name: filename
+        value: ./images/cirros-0.4.0-x86_64-disk.img

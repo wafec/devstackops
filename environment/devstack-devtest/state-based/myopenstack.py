@@ -66,12 +66,13 @@ def build_test_func(test, cloud, json_print=False):
     return test_func.run
 
 
-class Test:
-    def __init__(self, event):
-        self.event = event
-        self.args = None
+if __name__ == '__main__':
+    class Test:
+        def __init__(self, event):
+            self.event = event
+            self.args = None
 
 
-build_test_func(Test('compute.servers'), 'devstack', True)()
-build_test_func(Test('compute.images'), 'devstack', True)()
+    build_test_func(Test('compute.servers'), 'devstack', True)()
+    build_test_func(Test('compute.images'), 'devstack', True)()
 
