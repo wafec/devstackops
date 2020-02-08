@@ -2,16 +2,48 @@ test-case:
   - event: compute.create_flavor
     args:
       - name: name
-        value: test
+        value: flavor_test62
       - name: ram
         value: 512
       - name: vcpus
         value: 1
       - name: disk
-        value: 0
+        value: 2
+    states:
+      - name: flavor_created
   - event: image.create_image
     args:
       - name: name
-        value: test
+        value: image_test23
       - name: filename
         value: ./images/cirros-0.4.0-x86_64-disk.img
+    states:
+      - name: image_created
+  - event: block_storage.create_volume
+    args:
+      - name: name
+        value: voltest2
+      - name: size
+        value: 2
+    states:
+      - name: volume_created
+  - event: compute.create_server
+    args:
+      - name: name
+        value: server_test2
+      - name: flavor_id
+        value: flavor_test62
+      - name: image_id
+        value: image_test23
+      - name: networks
+        value: auto
+    states:
+      - name: server_created
+  - event: compute.create_volume_attachment
+    args:
+      - name: server
+        value: server_test2
+      - name: volume_id
+        value: voltest2
+    states:
+      - name: volume_attached

@@ -1,0 +1,14 @@
+import state_based
+import myopenstack
+
+
+tests = state_based.tests_from_file('./tests/01-test-test-case.yaml')
+test_handler = state_based.TestHandler(tests)
+myopenstack.build_tests(test_handler, tests, 'devstack', False)
+state_based.test_tests(tests,
+                       profile='local-test',
+                       state_monitor_function=myopenstack.StateMonitorFunction(test_handler, 'devstack').func,
+                       test_handler=test_handler, ignore_falsification=False)
+if len(test_handler.exceptions) > 0:
+    for exception in test_handler.exceptions:
+        print(exception)

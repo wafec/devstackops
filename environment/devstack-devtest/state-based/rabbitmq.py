@@ -3,6 +3,8 @@ import pika
 import json
 import multiprocessing
 import threading
+import sys
+import time
 
 
 WILDCARD = 'test-'
@@ -46,6 +48,35 @@ def _assert_falsification(host, user, passwd):
     print('falsification was completed')
 
 
+class Undo:
+    def __init__(self, host, user, passwd, binding):
+        self._host = host
+        self._user = user
+        self._passwd = passwd
+        self._binding = binding
+
+    def undo_falsify(self):
+        connection = _create_connection(self._host, self._user, self._passwd, self._binding['vhost'])
+        channel = connection.channel()
+        source, destination, key = (self._binding['source'], self._binding['destination'], self._binding['routing_key'])
+        test_queue_name = '%s%s' % (WILDCARD, destination)
+        channel.queue_unbind(test_queue_name, source, key)
+        channel.queue_bind(destination, source, key)
+
+
+class UndoList:
+    def __init__(self):
+        self._items = []
+
+    def add(self, host, user, passwd, binding):
+        self._items.append(Undo(host, user, passwd, binding))
+
+    def undo_falsify_all(self):
+        for item in self._items:
+            item.undo_falsify()
+        print('all falsification undid')
+
+
 def falsify_bindings(host, user, passwd):
     bindings = _get_management_service(host, user, passwd, 'bindings')
     exchanges = _get_management_service(host, user, passwd, 'exchanges')
@@ -55,6 +86,7 @@ def falsify_bindings(host, user, passwd):
     bindings = [binding for binding in bindings if binding['destination'] in [queue['name'] for queue in queues]]
     bindings = [binding for binding in bindings if binding['source'] and binding['destination']]
     if bindings and exchanges and queues:
+        undo_list = UndoList()
         for binding in bindings:
             connection = _create_connection(host, user, passwd, binding['vhost'])
             _create_test_bindings(connection)
@@ -69,45 +101,63 @@ def falsify_bindings(host, user, passwd):
                 channel.queue_declare(test_queue_name)
                 channel.queue_bind(test_queue_name, source, key)
                 channel.queue_bind(destination, source, test_key_name)
+                undo_list.add(host, user, passwd, binding)
         _assert_falsification(host, user, passwd)
-        return True
-    return False
+        return undo_list
+    return None
 
 
 class MessageArrivedHandler(multiprocessing.Process):
-    def __init__(self, binding, connection_props, mapi_port):
+    def __init__(self, binding, connection_props, mapi_port, continue_ev):
         super(MessageArrivedHandler, self).__init__()
         self._binding = binding
         self._connection_props = connection_props
-        self._connection = _create_connection(connection_props['host'], connection_props['user'], connection_props['passwd'])
+        self._connection = _create_connection(connection_props['host'], connection_props['user'], connection_props['passwd'], binding['vhost'])
         self._mapi_port = mapi_port
         self._temp_queue, self._key, self._exchange = (binding['destination'], binding['routing_key'], binding['source'])
         self._queue = self._temp_queue[len(WILDCARD):]
-        self._temp_key = '%s%s' % (WILDCARD, self._key)
+        self._test_key = '%s%s' % (WILDCARD, self._key)
+        self._continue_ev = continue_ev
 
     def run(self):
         channel = self._connection.channel()
         channel.queue_declare(self._temp_queue)
         print('consuming queue %s' % self._temp_queue)
         channel.basic_consume(self._temp_queue, self._on_message_arrived)
+        self._continue_ev.set()
+        channel.start_consuming()
 
-    def _on_message_arrived(self, channel, method_frame, header_frame, body):
-        data = { body: body }
-        res = requests.post('http://localhost:%d/messages' % self._mapi_port, json=data)
-        if res.status_code == 200:
-            body = res.json['body']
-        channel = self._connection.channel()
-        channel.queue_declare(self._queue)
-        channel.basic_publish(queue=self._queue, exchange=self._exchange, routing_key=self._temp_key, body=body)
+    def _on_message_arrived(self, channel, method_frame, properties, body):
+        print('rabbitmq message arrived')
+        try:
+            data = {
+                'body': str(body.decode('utf-8')),
+                'source': self._binding['source'],
+                'destination': self._binding['destination'],
+                'routing_key': self._binding['routing_key'],
+                'vhost': self._binding['vhost'],
+                'wildcard': WILDCARD,
+                'test_key': self._test_key,
+                'temp_queue': self._temp_queue,
+                'queue': self._temp_queue[len(WILDCARD):]
+            }
+            res = requests.post('http://localhost:%d/messages' % self._mapi_port, json=data)
+            if res.status_code == 200:
+                body = res.json()['body'].encode('utf-8')
+        except:
+            print('message-monitor-service unavailable')
         channel.basic_ack(delivery_tag=method_frame.delivery_tag)
+        channel.basic_publish(exchange=self._exchange, routing_key=self._test_key, body=body, properties=properties)
 
 
 def _start_binding_falsified_queues(bindings, host, user, passwd, sync_ev, termination_ev, mapi_port):
     handlers = []
     for binding in bindings:
-        handler = MessageArrivedHandler(binding, { 'host': host, 'user': user, 'passwd': passwd }, mapi_port)
+        continue_ev = multiprocessing.Event()
+        handler = MessageArrivedHandler(binding, { 'host': host, 'user': user, 'passwd': passwd }, mapi_port, continue_ev)
         handler.start()
         handlers.append(handler)
+        continue_ev.wait()
     sync_ev.set()
     termination_ev.wait()
     for handler in handlers:
@@ -120,10 +170,46 @@ def bind_to_falsified_queues(host, user, passwd, termination_ev, mapi_port):
     res = requests.get('http://%s:15672/api/bindings' % (host), auth=(user, passwd))
     if res.status_code:
         bindings = json.loads(res.content)
-        bindings = [binding for binding in bindings if binding['destination'].startswith(WILDCARD)]
+        bindings = [binding for binding in bindings if binding['destination'].startswith(WILDCARD) and binding['source']]
         sync_ev = threading.Event()
         handler = threading.Thread(target=_start_binding_falsified_queues, args=(bindings, host, user, passwd, sync_ev, termination_ev, mapi_port))
         handler.start()
         sync_ev.wait()
         return True
     return False
+
+
+if __name__ == '__main__':
+    cmd = sys.argv[1]
+    if cmd == 'a':
+        conn = _create_connection('localhost', 'admin', 'supersecret')
+        channel = conn.channel()
+        channel.queue_declare('queue1')
+        channel.exchange_declare('exchange1', exchange_type='topic')
+        channel.queue_bind(queue='queue1', exchange='exchange1', routing_key='key1')
+        falsify_bindings('localhost', 'admin', 'supersecret')
+    elif cmd == 'b':
+        def _message_callback(channel, method, frame, body):
+            print(body)
+            channel.basic_ack(delivery_tag=method.delivery_tag)
+
+        def _consume():
+            conn = _create_connection('localhost', 'admin', 'supersecret')
+            channel = conn.channel()
+            print('consuming test-queue1')
+            channel.basic_consume(queue='test-queue1', on_message_callback=_message_callback)
+            channel.start_consuming()
+
+
+        process1 = multiprocessing.Process(target=_consume)
+        process1.start()
+
+        time.sleep(2)
+
+        conn = _create_connection('localhost', 'admin', 'supersecret')
+        channel = conn.channel()
+        print('publishing hello world')
+        channel.basic_publish(exchange='exchange1', routing_key='key1', body='Hello World')
+
+        process1.terminate()
+        process1.join()

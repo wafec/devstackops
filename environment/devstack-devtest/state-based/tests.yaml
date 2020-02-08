@@ -1,0 +1,15 @@
+tests:
+  development:
+    rabbitmq:
+      host: localhost
+      user: admin
+      passwd: supersecret
+    message-api:
+      port: 5064
+  local-test:
+    rabbitmq:
+      host: 192.168.56.81
+      user: stackrabbit
+      passwd: supersecret
+    message-api:
+      port: 7070
