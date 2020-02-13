@@ -6,3 +6,4 @@ flask-script
 requests
 openstacksdk
 pygments
+hypothesis

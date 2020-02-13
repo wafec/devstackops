@@ -10,6 +10,9 @@ import traceback
 import yaml
 import os
 import json
+import database
+import mydictutils
+import operators
 
 
 class Message(object):
@@ -92,7 +95,7 @@ class TestHandler(object):
     STARTED = 1
     NONE = 2
 
-    def __init__(self, tests):
+    def __init__(self, tests, test_id=None, test_number=None):
         self.tests = tests
         self.current_test = None
         self.current_result = None
@@ -103,6 +106,8 @@ class TestHandler(object):
         self._iteration_number = None
         self._exceptions = []
         self._instances = {}
+        self.test_id = test_id
+        self.test_number = test_number
 
     def start_iteration_counting(self):
         self._iteration_number = 0
@@ -207,24 +212,73 @@ class StateMonitor(threading.Thread):
 class MessageMonitorApi(Resource):
     def __init__(self, test_handler):
         self._test_handler = test_handler
+        self._monitor_injection_enabled = True
+
+    def _add_injection(self, message_id, path, value, mutation, param_type, name):
+        try:
+            return database.injection_add(message_id, path, value, mutation, param_type, name)
+        except database.DatabaseError:
+            return database.injection_add(message_id, path, value, 'unsupported type', param_type, name)
+
+    def _monitor_injection(self, message_args, message_id):
+        if database.injection_count(self._test_handler.test_id) > 0:
+            return None
+
+        params = mydictutils.dict_collect_params(message_args)
+        injections = database.injection_list_params(self._test_handler.test_number)
+        xs = operators.the_operators()
+        for path in params:
+            value = mydictutils.dict_param_get(message_args, path)
+            param_type = mydictutils.dict_what_type_is_it(value)
+            if param_type in xs:
+                if path not in [injection['injection_param'] for injection in injections]:
+                    function = xs[param_type][0]
+                    name = function['name']
+                    action = function['function']
+                    mutation = action(value)
+                    injection_id = self._add_injection(message_id, path, value, mutation, param_type, name)
+                    mydictutils.dict_param_set(message_args, path, mutation)
+                    return injection_id
+                else:
+                    existent = [(injection['injection_operator'], injection['injection_param_type']) for injection in injections if injection['injection_param'] == path]
+                    types = set([x[1] for x in existent])
+                    names = set([x[0] for x in existent])
+                    x = [xs[i] for i in xs if i in types]
+                    flat = [item for sublist in x for item in sublist]
+                    for e in flat:
+                        if e['name'] not in names:
+                            action = e['function']
+                            name = e['name']
+                            mutation = action(value)
+                            injection_id = self._add_injection(message_id, path, value, mutation, param_type, name)
+                            mydictutils.dict_param_set(message_args, path, mutation)
+                            return injection_id
+        return None
 
     def post(self):
         content = request.json
-        with open('logs', 'a') as writer:
-            pack = json.loads(content['body'])
-            message = pack['oslo.message']
-            message = json.loads(message)
-            pack['oslo.message'] = message
-            pack['_source'] = content['source']
-            pack['_destination'] = content['destination']
-            pack['_routing_key'] = content['routing_key']
-            # writer.write(json.dumps(pack, sort_keys=True, indent=4, separators=(',', ': ')))
-            if 'method' in pack['oslo.message']:
-                writer.write('method: %s, source: %s, destination: %s, vhost: %s, routing_key: %s, queue: %s' % (pack['oslo.message']['method'], content['source'], content['destination'], content['vhost'], content['routing_key'], content['queue']))
-            else:
-                writer.write('wrong: %s' % ", ".join(pack['oslo.message'].keys()))
-            writer.write('\n')
-        return { 'body': content['body'] }
+        body = None
+        if self._monitor_injection_enabled:
+            message_src = content['source']
+            message_dst = content['destination']
+            message_key = content['routing_key']
+            body = json.loads(content['body'])
+            message_payload = json.loads(body['oslo.message'])
+            message_action = None
+            message_args = None
+            if 'method' in message_payload:
+                message_action = message_payload['method']
+            if 'args' in message_payload:
+                message_args = message_payload['args']
+            if self._test_handler.test_id:
+                message_id = database.message_add(self._test_handler.test_id,
+                                                  message_src, message_dst, message_key, json.dumps(message_payload),
+                                                  message_action)
+                if message_action and message_args and self._test_handler.test_number:
+                    monitor_injection_result = self._monitor_injection(message_args, message_id)
+                    if monitor_injection_result is not None:
+                        body['oslo.message'] = json.dumps(message_args)
+        return { 'body': json.dumps(body) if body else content['body'] }
 
     def get(self):
         return 'MessageMonitorApi is active!'

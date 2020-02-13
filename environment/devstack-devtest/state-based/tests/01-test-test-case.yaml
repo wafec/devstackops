@@ -2,7 +2,7 @@ test-case:
   - event: compute.create_flavor
     args:
       - name: name
-        value: flavor_test62
+        value: flavor_test79
       - name: ram
         value: 512
       - name: vcpus
@@ -32,7 +32,7 @@ test-case:
       - name: name
         value: server_test2
       - name: flavor_id
-        value: flavor_test62
+        value: flavor_test79
       - name: image_id
         value: image_test23
       - name: networks

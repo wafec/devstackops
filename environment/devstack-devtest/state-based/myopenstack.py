@@ -190,15 +190,3 @@ class StateMonitorFunction:
             for state in self.current_test.states:
                 threading.Thread(target=self._monitor, args=(state,)).start()
             self._states_ev.wait()
-
-
-if __name__ == '__main__':
-    class Test:
-        def __init__(self, event):
-            self.event = event
-            self.args = None
-
-
-    build_test_func(Test('compute.servers'), 'devstack', True)()
-    build_test_func(Test('compute.images'), 'devstack', True)()
-

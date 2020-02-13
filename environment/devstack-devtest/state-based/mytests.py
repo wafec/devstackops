@@ -1,9 +1,12 @@
 import state_based
 import myopenstack
+import database
 
 
 tests = state_based.tests_from_file('./tests/01-test-test-case.yaml')
-test_handler = state_based.TestHandler(tests)
+test_number = 1
+test_id = database.test_add(1, test_number)
+test_handler = state_based.TestHandler(tests, test_id, test_number)
 myopenstack.build_tests(test_handler, tests, 'devstack', False)
 state_based.test_tests(tests,
                        profile='local-test',
