@@ -6,16 +6,17 @@ import time
 import argparse
 
 
-EXTERNAL_ADDRESS = '192.168.56.81'
+EXTERNAL_ADDRESS = 'localhost:9000'
 
 
 class EnvService(Resource):
     def __init__(self):
         pass
 
-    def put(self, state):
+    def put(self):
+        args = request.args
         test_id = database.control_ret_last_test_id()
-        database.control_update(test_id, state=state)
+        database.control_update(test_id, state=args['state'])
 
     def get(self):
         test_id = database.control_ret_last_test_id()
@@ -50,7 +51,7 @@ def wait_init():
     while True:
         _wait_for_state('init', url)
         _do_env_setup()
-        requests.put(url, data={'state': 'env_up'})
+        requests.put(url + '?state=env_up')
 
 
 if __name__ == '__main__':
