@@ -1,12 +1,16 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_restful import Api, Resource
 import database
 import requests
 import time
 import argparse
+import subprocess
 
 
-EXTERNAL_ADDRESS = 'localhost:9000'
+EXTERNAL_PORT = 9000
+EXTERNAL_URL = '192.168.56.114'
+EXTERNAL_ADDRESS = str(EXTERNAL_URL) + ':' + str(EXTERNAL_PORT)
+_URL = 'http://' + EXTERNAL_ADDRESS + '/env'
 
 
 class EnvService(Resource):
@@ -21,7 +25,7 @@ class EnvService(Resource):
     def get(self):
         test_id = database.control_ret_last_test_id()
         state = database.control_ret_state(test_id)
-        return {'state': state}
+        return jsonify({'state': state})
 
     def post(self):
         content = request.json
@@ -36,22 +40,27 @@ def _wait_for_state(expected_state, url):
 
 
 def wait_env(test_id):
-    url = 'http://localhost:9000/env'
-    requests.post(url, json={'test_id': test_id})
-    _wait_for_state('env_up', url)
+    requests.post(_URL, json={'test_id': test_id})
+    _wait_for_state('env_up', _URL)
+
+
+def wait_test_finish():
+    requests.put(_URL + '?state=' + 'terminated')
 
 
 def _do_env_setup():
-    time.sleep(1)
-    print('env up')
+    machines = []
+    for machine in machines:
+        subprocess.run(['VBoxManage', 'controlvm', machine['name'], 'poweroff'])
+        subprocess.run(['VBoxManage', 'snapshot', machine['name'], 'restore', machine['snapshot']])
+        subprocess.run(['VBoxManage', 'startvm', machine['name']])
 
 
 def wait_init():
-    url = 'http://' + str(EXTERNAL_ADDRESS) + '/env'
     while True:
-        _wait_for_state('init', url)
+        _wait_for_state('init', _URL)
         _do_env_setup()
-        requests.put(url + '?state=env_up')
+        requests.put(_URL + '?state=env_up')
 
 
 if __name__ == '__main__':
@@ -62,6 +71,6 @@ if __name__ == '__main__':
         app = Flask('environment-controller')
         api = Api(app)
         api.add_resource(EnvService, '/env')
-        app.run(port=9000)
+        app.run(port=EXTERNAL_PORT, host='0.0.0.0')
     elif args.mode == 'client':
         wait_init()

@@ -134,7 +134,8 @@ def control_ret_state(test_id):
     con = sqlite3.connect(CONNECTION_STRING)
     with con:
         cur = con.cursor()
-        cur.execute('SELECT CONTROL_STATE FROM CONTROL WHERE TEST_ID = :TEST_ID', {
+        cur.execute('SELECT CONTROL_STATE FROM CONTROL WHERE TEST_ID = :TEST_ID '
+                    'ORDER BY CONTROL_DATE DESC', {
             'TEST_ID': test_id
         })
         row = cur.fetchone()

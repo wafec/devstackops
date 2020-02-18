@@ -6,6 +6,8 @@ tests:
       passwd: supersecret
     message-api:
       port: 5064
+    env-api:
+      port: 9000
   local-test:
     rabbitmq:
       host: 192.168.56.81
@@ -13,3 +15,8 @@ tests:
       passwd: supersecret
     message-api:
       port: 7070
+    env-api:
+      port: 9000
+      machines:
+        - name: Devstack All-in-One 18
+          snapshot: Rabbit Management Okay
