@@ -209,10 +209,20 @@ class StateMonitor(threading.Thread):
         print('state-monitor stopped')
 
 
+class OutputMonitorApi(Resource):
+    def __init__(self, test_handler):
+        self._test_handler = test_handler
+
+    def post(self):
+        content = request.json
+        test_output = content['output']
+        database.output_add(self._test_handler.test_id, test_output)
+
+
 class MessageMonitorApi(Resource):
     def __init__(self, test_handler):
         self._test_handler = test_handler
-        self._monitor_injection_enabled = True
+        self._monitor_injection_enabled = False
 
     def _add_injection(self, message_id, path, value, mutation, param_type, name):
         try:
@@ -294,6 +304,7 @@ class MessageMonitor(threading.Thread):
         app = Flask('message-monitor')
         api = Api(app)
         api.add_resource(MessageMonitorApi, '/messages', resource_class_kwargs={ 'test_handler': self._test_handler })
+        api.add_resource(OutputMonitorApi, '/outputs', resource_class_kwargs={ 'test_handler': self._test_handler })
         server = multiprocessing.Process(target=app.run, kwargs={ 'port': self._port })
         server.start()
         with self._test_handler.completion_cv:

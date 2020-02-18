@@ -4,6 +4,7 @@ import pika
 import os
 import sys
 import json
+import requests
 
 
 if not os.path.exists('./data/names'):
@@ -39,7 +40,14 @@ class QueueConsumer(object):
 
     def on_message(self, channel, method_frame, header_frame, body):
         print(self._queue, body)
+        payload = { 'message': body }
+        res = requests.post('http://localhost:5002/faultInjectionTest', json=payload)
+        if res.status_code == 200:
+            body = json.loads(res.text)["message"]
+            print('body changed - ' + body)
+            print('sending ', self._exchange, self._routing_key)
         self._channel.basic_publish(exchange=self._exchange, routing_key=self._routing_key, body=body)
+        channel.basic_ack(delivery_tag=method_frame.delivery_tag)
 
 
 def is_bridge(instance):
