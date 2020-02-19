@@ -90,7 +90,7 @@ def prepare_vars(profile):
         api = tests[profile]['env-api']
         PROFILE_CURRENT = profile
         if 'address' in api:
-            EXTERNAL_URL = api['port']
+            EXTERNAL_URL = api['address']
         if 'port' in api:
             EXTERNAL_PORT = api['port']
 
