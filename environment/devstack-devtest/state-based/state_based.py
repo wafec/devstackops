@@ -13,6 +13,10 @@ import json
 import database
 import mydictutils
 import operators
+import logging
+
+
+logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
 
 class Message(object):
@@ -201,7 +205,8 @@ class StateMonitor(threading.Thread):
                     continue
                 print('[%02d] monitor states' % self._test_handler.iteration_number)
                 try:
-                    self.func()
+                    result = self.func()
+                    print('[%02d] state-monitor result = %s' % (self._test_handler.iteration_number, str(result)))
                 except Exception as monitor_exc:
                     self._test_handler.exceptions.append(monitor_exc)
                 self._test_handler.execution_cv.notify()
@@ -220,9 +225,9 @@ class OutputMonitorApi(Resource):
 
 
 class MessageMonitorApi(Resource):
-    def __init__(self, test_handler):
+    def __init__(self, test_handler, injection_enabled=False):
         self._test_handler = test_handler
-        self._monitor_injection_enabled = False
+        self._monitor_injection_enabled = injection_enabled
 
     def _add_injection(self, message_id, path, value, mutation, param_type, name):
         try:
@@ -247,6 +252,7 @@ class MessageMonitorApi(Resource):
                     action = function['function']
                     mutation = action(value)
                     injection_id = self._add_injection(message_id, path, value, mutation, param_type, name)
+                    print('[%02d] injection new mutation' % self._test_handler.interation_number)
                     mydictutils.dict_param_set(message_args, path, mutation)
                     return injection_id
                 else:
@@ -261,6 +267,7 @@ class MessageMonitorApi(Resource):
                             name = e['name']
                             mutation = action(value)
                             injection_id = self._add_injection(message_id, path, value, mutation, param_type, name)
+                            print('[%02d] injection existent mutation' % self._test_handler.iteration_number)
                             mydictutils.dict_param_set(message_args, path, mutation)
                             return injection_id
         return None
@@ -295,15 +302,17 @@ class MessageMonitorApi(Resource):
 
 
 class MessageMonitor(threading.Thread):
-    def __init__(self, test_handler, port):
+    def __init__(self, test_handler, port, injection_enabled):
         super(MessageMonitor, self).__init__()
         self._test_handler = test_handler
         self._port = port
+        self._injection_enabled = injection_enabled
+        print('[%02d] message-monitor injection enabled %s' % (test_handler.iteration_number, 'enabled' if injection_enabled else 'disabled'))
 
     def run(self):
         app = Flask('message-monitor')
         api = Api(app)
-        api.add_resource(MessageMonitorApi, '/messages', resource_class_kwargs={ 'test_handler': self._test_handler })
+        api.add_resource(MessageMonitorApi, '/messages', resource_class_kwargs={ 'test_handler': self._test_handler, 'injection_enabled': self._injection_enabled })
         api.add_resource(OutputMonitorApi, '/outputs', resource_class_kwargs={ 'test_handler': self._test_handler })
         server = multiprocessing.Process(target=app.run, kwargs={ 'port': self._port })
         server.start()
@@ -356,7 +365,9 @@ def test_tests(tests, opts_or_file=None, profile=None, state_monitor_function=No
 
     rmq_host, rmq_user, rmq_passwd = (opts_or_file['rabbitmq']['host'], opts_or_file['rabbitmq']['user'], opts_or_file['rabbitmq']['passwd'])
     message_api_port = opts_or_file['message-api']['port']
-
+    message_api_injection_enabled = False
+    if 'injection-enabled' in opts_or_file['message-api']:
+        message_api_injection_enabled = opts_or_file['message-api']['injection-enabled']
     falsification_rollback = None
     if not ignore_falsification:
         falsification_rollback = rabbitmq.falsify_bindings(rmq_host, rmq_user, rmq_passwd)
@@ -367,7 +378,7 @@ def test_tests(tests, opts_or_file=None, profile=None, state_monitor_function=No
         test_handler = test_handler if test_handler else TestHandler(tests)
         test_execution = TestSuiteExecution(test_handler)
         state_monitor = StateMonitor(test_handler, state_monitor_function)
-        message_monitor = MessageMonitor(test_handler, message_api_port)
+        message_monitor = MessageMonitor(test_handler, message_api_port, message_api_injection_enabled)
 
         message_monitor.start()
         message_api_active = wait_for_message_monitor_api(message_api_port)

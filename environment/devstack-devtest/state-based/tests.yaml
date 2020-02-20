@@ -15,6 +15,7 @@ tests:
       passwd: supersecret
     message-api:
       port: 7070
+      injection-enabled: yes
     env-api:
       port: 9000
       address: 192.168.56.114

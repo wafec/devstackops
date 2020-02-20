@@ -88,24 +88,30 @@ class StateMonitorException(Exception):
     pass
 
 
-def st_wait(function, times=100, interval=1):
-    def wrapped_function(*args, **kwargs):
-        status_ok = False
-        counter = 0
-        opts = kwargs['opts']
-        opts['conn'] = openstack.connect(cloud=opts['cloud'])
-        while not status_ok and counter < times:
-            try:
-                function(*args, **kwargs)
-                status_ok = True
-            except StateMonitorException:
-                status_ok = False
-                time.sleep(interval)
-            counter = counter + 1
-    return wrapped_function
+def st_wait(times=20, interval=1):
+    def st_wait_wrapper(function):
+        def wrapped_function(*args, **kwargs):
+            status_ok = False
+            exc = None
+            counter = 0
+            opts = kwargs['opts']
+            opts['conn'] = openstack.connect(cloud=opts['cloud'])
+            while not status_ok and counter < times:
+                try:
+                    function(*args, **kwargs)
+                    status_ok = True
+                    exc = None
+                except StateMonitorException as state_exc:
+                    status_ok = False
+                    exc = state_exc
+                    time.sleep(interval)
+                counter = counter + 1
+            return status_ok, exc
+        return wrapped_function
+    return st_wait_wrapper
 
 
-@st_wait
+@st_wait()
 def st_flavor_created(opts):
     test_handler, conn = opts['test_handler'], opts['conn']
     try:
@@ -117,7 +123,7 @@ def st_flavor_created(opts):
         raise StateMonitorException('flavor invalid request ')
 
 
-@st_wait
+@st_wait()
 def st_image_created(opts):
     test_handler, conn = opts['test_handler'], opts['conn']
     try:
@@ -129,7 +135,7 @@ def st_image_created(opts):
         raise StateMonitorException('image invalid request')
 
 
-@st_wait
+@st_wait(times=60)
 def st_server_created(opts):
     test_handler, conn = opts['test_handler'], opts['conn']
     try:
@@ -145,7 +151,7 @@ def st_server_created(opts):
         raise StateMonitorException('server invalid request')
 
 
-@st_wait
+@st_wait()
 def st_volume_created(opts):
     test_handler, conn = opts['test_handler'], opts['conn']
     try:
@@ -164,6 +170,7 @@ class StateMonitorFunction:
         self._lock = threading.Lock()
         self._states_counter = None
         self._states_ev = threading.Event()
+        self._result = None
 
     @property
     def current_test(self):
@@ -175,7 +182,7 @@ class StateMonitorFunction:
             print('st_%s found' % state.name)
             func = globals()['st_%s' % state.name]
             opts = { 'cloud': self._cloud, 'test_handler': self._test_handler }
-            func(opts=opts)
+            self._result = func(opts=opts)
         else:
             print('st_%s not found' % state.name)
         with self._lock:
@@ -190,3 +197,4 @@ class StateMonitorFunction:
             for state in self.current_test.states:
                 threading.Thread(target=self._monitor, args=(state,)).start()
             self._states_ev.wait()
+        return self._result

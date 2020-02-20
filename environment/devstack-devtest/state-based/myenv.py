@@ -49,15 +49,20 @@ class EnvService(Resource):
 
 
 def _wait_for_state(expected_state, url):
+    expected_state_list = expected_state if isinstance(expected_state, list) else [expected_state]
     observed_state = requests.get(url).json()['state']
-    while observed_state != expected_state:
+    while observed_state not in expected_state_list:
         time.sleep(0.5)
         observed_state = requests.get(url).json()['state']
+    if observed_state in expected_state_list:
+        return observed_state
+    return None
 
 
 def wait_env(test_id):
     requests.post(url(), json={'test_id': test_id})
     _wait_for_state('env_up', url())
+    time.sleep(1)
 
 
 def wait_test_finish():

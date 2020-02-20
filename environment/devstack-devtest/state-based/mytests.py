@@ -7,6 +7,7 @@ import myenv
 tests = state_based.tests_from_file('./tests/01-test-test-case.yaml')
 test_number = 1
 test_id = database.test_add(1, test_number)
+print('tests test_id=%d, test_number=%d' % (test_id, test_number))
 myenv.wait_env(test_id)
 test_handler = state_based.TestHandler(tests, test_id, test_number)
 myopenstack.build_tests(test_handler, tests, 'devstack', False)

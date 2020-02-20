@@ -128,7 +128,9 @@ class MessageArrivedHandler(multiprocessing.Process):
         channel.start_consuming()
 
     def _on_message_arrived(self, channel, method_frame, properties, body):
-        print('rabbitmq message arrived')
+        print('rabbitmq message arrived (exchange=%s, key=%s, delivery=%d)' % (method_frame.exchange,
+                                                                               method_frame.routing_key,
+                                                                               method_frame.delivery_tag))
         try:
             data = {
                 'body': str(body.decode('utf-8')),

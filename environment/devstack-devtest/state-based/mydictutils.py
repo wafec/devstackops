@@ -25,6 +25,7 @@ def dict_param_get_set(subject, path, value=None, method='get'):
             if part != '$0':
                 if subject and isinstance(subject, dict) and part in subject:
                     if index == len(parts) - 1 and method == 'set':
+                        print('dict will change %s, %s = %s' % (path, part, subject[part]))
                         subject[part] = value
                     subject = subject[part]
             else:
