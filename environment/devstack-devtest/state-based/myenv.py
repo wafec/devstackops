@@ -6,6 +6,10 @@ import time
 import argparse
 import subprocess
 import yaml
+import logging
+
+
+logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
 
 def load_env_config():
@@ -37,6 +41,7 @@ class EnvService(Resource):
         args = request.args
         test_id = database.control_ret_last_test_id()
         database.control_update(test_id, state=args['state'])
+        print('env-service updating test id ' + str(test_id) + ' to ' + args['state'])
 
     def get(self):
         test_id = database.control_ret_last_test_id()
@@ -46,6 +51,7 @@ class EnvService(Resource):
     def post(self):
         content = request.json
         database.control_add(test_id=content['test_id'], state='init')
+        print('env-service init test id ' + str(content['test_id']))
 
 
 def _wait_for_state(expected_state, url):
@@ -61,12 +67,15 @@ def _wait_for_state(expected_state, url):
 
 def wait_env(test_id):
     requests.post(url(), json={'test_id': test_id})
+    print('env waiting state = running')
     _wait_for_state('env_up', url())
+    print('env state = running (sleeping 1s)')
     time.sleep(1)
 
 
 def wait_test_finish():
     requests.put(url() + '?state=' + 'terminated')
+    print('env state = terminated')
 
 
 def _do_env_setup():
@@ -74,14 +83,16 @@ def _do_env_setup():
     for machine in machines:
         subprocess.run(['VBoxManage', 'controlvm', machine['name'], 'poweroff'])
         subprocess.run(['VBoxManage', 'snapshot', machine['name'], 'restore', machine['snapshot']])
-        subprocess.run(['VBoxManage', 'startvm', machine['name']])
+        subprocess.run(['VBoxManage', 'startvm', machine['name'], '--type', 'headless'])
 
 
 def wait_init():
     while True:
         _wait_for_state('init', url())
+        print('env init found')
         _do_env_setup()
         requests.put(url() + '?state=env_up')
+        print('env state = running')
 
 
 def prepare_vars(profile):
