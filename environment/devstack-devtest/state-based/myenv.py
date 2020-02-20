@@ -88,6 +88,7 @@ def _do_env_setup():
 
 def wait_init():
     while True:
+        print('env waiting init')
         _wait_for_state('init', url())
         print('env init found')
         _do_env_setup()
