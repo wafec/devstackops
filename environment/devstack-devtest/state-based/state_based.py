@@ -252,7 +252,7 @@ class MessageMonitorApi(Resource):
                     action = function['function']
                     mutation = action(value)
                     injection_id = self._add_injection(message_id, path, value, mutation, param_type, name)
-                    print('[%02d] injection new mutation' % self._test_handler.interation_number)
+                    print('[%02d] injection new mutation' % self._test_handler.iteration_number)
                     mydictutils.dict_param_set(message_args, path, mutation)
                     return injection_id
                 else:
