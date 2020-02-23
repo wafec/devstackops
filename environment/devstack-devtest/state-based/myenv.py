@@ -107,16 +107,24 @@ def agent_collect_outputs():
     if PROFILE_CONFIG is None:
         raise ValueError('Profile cannot be none')
 
+    f_state = 0
+
     for output in agent_get_outputs():
         try:
             res = requests.post('http://' + PROFILE_CONFIG['env-api']['address'] + ':' + str(PROFILE_CONFIG['message-api']['port']) + '/outputs',
                                 json={ 'output': output })
             if res.status_code == 200:
-                print('Output sent successfully')
+                if f_state != 1:
+                    print('output-api receiving')
+                    f_state = 1
             else:
-                print('Could not send output, code %d' % res.status_code)
+                if f_state != 2:
+                    print('output-api not receiving, code' % res.status_code)
+                    f_state = 2
         except Exception as exc:
-            print('Could not send output, due to "%s"' % repr(exc))
+            if f_state != 3:
+                print('output-api not receiving, exception "%s"' % repr(exc))
+                f_state = 3
 
 
 def prepare_vars(profile):
