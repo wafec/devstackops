@@ -1,11 +1,14 @@
 import sqlite3
 import multiprocessing
+import threading
 import datetime
 
 
 CONNECTION_STRING = 'tests.db'
 MESSAGE_ADD_LOCK = multiprocessing.Lock()
 INJECTION_ADD_LOCK = multiprocessing.Lock()
+MESSAGE_ADD_LOCK_T = threading.Lock()
+INJECTION_ADD_LOCK_T = threading.Lock()
 
 
 class DatabaseError(Exception):
@@ -36,7 +39,7 @@ def test_add(test_number, exp_id):
 
 def message_add(test_id, message_src, message_dst, message_key, message_payload, message_action):
     con = sqlite3.connect(CONNECTION_STRING)
-    with con, MESSAGE_ADD_LOCK:
+    with con, MESSAGE_ADD_LOCK, MESSAGE_ADD_LOCK_T:
         cur = con.cursor()
         cur.execute("SELECT MAX(IFNULL(MESSAGE_ID, 0)) + 1 FROM MESSAGE")
         row = cur.fetchone()
@@ -65,7 +68,7 @@ def injection_list_params(test_number):
 def injection_add(message_id, injection_param, injection_value, injection_mutation, injection_param_type, injection_operator):
     con = sqlite3.connect(CONNECTION_STRING)
     result = None
-    with con, INJECTION_ADD_LOCK:
+    with con, INJECTION_ADD_LOCK, INJECTION_ADD_LOCK_T:
         cur = con.cursor()
         cur.execute("SELECT MAX(IFNULL(INJECTION_ID, 0)) + 1 FROM INJECTION")
         row = cur.fetchone()

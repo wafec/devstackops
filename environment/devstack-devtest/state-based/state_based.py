@@ -314,7 +314,7 @@ class MessageMonitor(threading.Thread):
         api = Api(app)
         api.add_resource(MessageMonitorApi, '/messages', resource_class_kwargs={ 'test_handler': self._test_handler, 'injection_enabled': self._injection_enabled })
         api.add_resource(OutputMonitorApi, '/outputs', resource_class_kwargs={ 'test_handler': self._test_handler })
-        server = multiprocessing.Process(target=app.run, kwargs={ 'port': self._port })
+        server = multiprocessing.Process(target=app.run, kwargs={ 'port': self._port, 'host': '0.0.0.0' })
         server.start()
         with self._test_handler.completion_cv:
             self._test_handler.completion_cv.wait()
