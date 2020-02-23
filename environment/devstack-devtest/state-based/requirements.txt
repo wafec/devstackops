@@ -7,3 +7,4 @@ requests
 openstacksdk
 pygments
 hypothesis
+sh

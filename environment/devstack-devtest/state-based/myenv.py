@@ -7,6 +7,7 @@ import argparse
 import subprocess
 import yaml
 import logging
+import sh
 
 
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
@@ -23,6 +24,7 @@ ENV_CONFIG = load_env_config()
 EXTERNAL_PORT = 9000
 EXTERNAL_URL = 'localhost'
 PROFILE_CURRENT = ''
+PROFILE_CONFIG = None
 
 
 def external_address():
@@ -96,16 +98,36 @@ def wait_init():
         print('env state = running')
 
 
+def agent_get_outputs():
+    for line in sh.tail("-f", "/var/log/syslog", _iter=True):
+        yield line
+
+
+def agent_collect_outputs():
+    for output in agent_get_outputs():
+        try:
+            res = requests.post('http://' + PROFILE_CONFIG['env-api']['address'] + ':' + PROFILE_CONFIG['message-api']['port'] + '/outputs',
+                                json={ 'output': output })
+            if res.status_code == 200:
+                print('Output sent successfully')
+            else:
+                print('Could not send output, code %d' % res.status_code)
+        except Exception as exc:
+            print('Could not send output, due to "%s"' % repr(exc))
+
+
 def prepare_vars(profile):
     global EXTERNAL_PORT
     global EXTERNAL_URL
     global PROFILE_CURRENT
+    global PROFILE_CONFIG
 
     tests = ENV_CONFIG['tests']
     if profile in tests:
         print('Profile changed to ' + profile)
         api = tests[profile]['env-api']
         PROFILE_CURRENT = profile
+        PROFILE_CONFIG = tests[profile]
         if 'address' in api:
             EXTERNAL_URL = api['address']
         if 'port' in api:
@@ -114,7 +136,7 @@ def prepare_vars(profile):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
-    parser.add_argument('mode', type=str, choices=['server', 'client'])
+    parser.add_argument('mode', type=str, choices=['server', 'client', 'agent'])
     parser.add_argument('--profile', type=str, required=False, default=None)
     args = parser.parse_args()
     if args.profile:
@@ -126,3 +148,5 @@ if __name__ == '__main__':
         app.run(port=EXTERNAL_PORT, host='0.0.0.0')
     elif args.mode == 'client':
         wait_init()
+    elif args.mode == 'agent':
+        agent_collect_outputs()
