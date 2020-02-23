@@ -104,6 +104,9 @@ def agent_get_outputs():
 
 
 def agent_collect_outputs():
+    if PROFILE_CONFIG is None:
+        raise ValueError('Profile cannot be none')
+
     for output in agent_get_outputs():
         try:
             res = requests.post('http://' + PROFILE_CONFIG['env-api']['address'] + ':' + PROFILE_CONFIG['message-api']['port'] + '/outputs',
