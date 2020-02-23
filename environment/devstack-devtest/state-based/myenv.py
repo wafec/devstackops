@@ -109,7 +109,7 @@ def agent_collect_outputs():
 
     for output in agent_get_outputs():
         try:
-            res = requests.post('http://' + PROFILE_CONFIG['env-api']['address'] + ':' + PROFILE_CONFIG['message-api']['port'] + '/outputs',
+            res = requests.post('http://' + PROFILE_CONFIG['env-api']['address'] + ':' + str(PROFILE_CONFIG['message-api']['port']) + '/outputs',
                                 json={ 'output': output })
             if res.status_code == 200:
                 print('Output sent successfully')
