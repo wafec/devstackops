@@ -177,7 +177,7 @@ class StateMonitorFunction:
         return self._test_handler.current_test
 
     def _monitor(self, state):
-        print('[%02d] monitor %s' % (self._test_handler.iteration_number, state))
+        print('[%02d] state-monitor %s "state"' % (self._test_handler.iteration_number, state))
         if ('st_%s' % state.name) in globals():
             print('st_%s found' % state.name)
             func = globals()['st_%s' % state.name]

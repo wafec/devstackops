@@ -21,4 +21,4 @@ tests:
       address: 192.168.56.114
       devices:
         - name: Devstack All-in-One 18
-          snapshot: Rabbit Management Okay
+          snapshot: MyEnv Sending

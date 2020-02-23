@@ -74,10 +74,18 @@ def injection_add(message_id, injection_param, injection_value, injection_mutati
             cur.execute("INSERT INTO INJECTION (INJECTION_ID, MESSAGE_ID, INJECTION_PARAM, INJECTION_VALUE, "
                         "INJECTION_MUTATION, INJECTION_PARAM_TYPE, INJECTION_OPERATOR, INJECTION_DATE) VALUES ("
                         "?, ?, ?, ?, ?, ?, ?, ?)", (
-                id, message_id, injection_param, injection_value, injection_mutation, injection_param_type, injection_operator, datetime.datetime.now()
+                id, message_id, injection_param, str(injection_value), injection_mutation, injection_param_type, injection_operator, datetime.datetime.now()
             ))
         except sqlite3.InterfaceError:
-            raise DatabaseError()
+            try:
+                cur.execute("INSERT INTO INJECTION (INJECTION_ID, MESSAGE_ID, INJECTION_PARAM, INJECTION_VALUE, "
+                            "INJECTION_MUTATION, INJECTION_PARAM_TYPE, INJECTION_OPERATOR, INJECTION_DATE) VALUES ("
+                            "?, ?, ?, ?, ?, ?, ?, ?)", (
+                                id, message_id, injection_param, 'Could not add value', injection_mutation,
+                                injection_param_type, injection_operator, datetime.datetime.now()
+                            ))
+            except:
+                raise DatabaseError()
         return id
 
 
