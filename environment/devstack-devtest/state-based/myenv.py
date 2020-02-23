@@ -7,7 +7,6 @@ import argparse
 import subprocess
 import yaml
 import logging
-import sh
 
 
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
@@ -99,6 +98,7 @@ def wait_init():
 
 
 def agent_get_outputs():
+    import sh
     for line in sh.tail("-f", "/var/log/syslog", _iter=True):
         yield line
 

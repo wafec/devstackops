@@ -197,13 +197,13 @@ class StateMonitor(threading.Thread):
 
     def run(self):
         while self._test_handler.status != TestHandler.STOPPED:
-            print('[%02d] monitor waiting test execution' % self._test_handler.iteration_number)
+            print('[%02d] state-monitor waiting test execution' % self._test_handler.iteration_number)
             with self._test_handler.execution_cv:
                 self._test_handler.statem_ev.set()
                 self._test_handler.execution_cv.wait()
                 if self._test_handler.status == TestHandler.STOPPED:
                     continue
-                print('[%02d] monitor states' % self._test_handler.iteration_number)
+                print('[%02d] state-monitor states' % self._test_handler.iteration_number)
                 try:
                     result = self.func()
                     print('[%02d] state-monitor result = %s' % (self._test_handler.iteration_number, str(result)))
