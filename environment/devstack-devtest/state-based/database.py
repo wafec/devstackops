@@ -100,6 +100,17 @@ def injection_count(test_id):
         return row[0]
 
 
+def injection_count_by_test_number(test_number):
+    con = sqlite3.connect(CONNECTION_STRING)
+    with con:
+        cur = con.cursor()
+        cur.execute('SELECT COUNT(*) FROM INJECTION I, MESSAGE M, TEST T WHERE '
+                    'M.TEST_ID = T.TEST_ID AND T.TEST_NUMBER = :TEST_NUMBER AND I.MESSAGE_ID = M.MESSAGE_ID ',
+                    { 'TEST_NUMBER': test_number })
+        row = cur.fetchone()
+        return row[0]
+
+
 def output_add(test_id, output_content):
     con = sqlite3.connect(CONNECTION_STRING)
     with con:

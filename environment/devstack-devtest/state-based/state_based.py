@@ -313,6 +313,7 @@ class MessageMonitor(threading.Thread):
         print('[%02d] message-monitor injection enabled %s' % (test_handler.iteration_number, 'enabled' if injection_enabled else 'disabled'))
 
     def run(self):
+        return
         app = Flask('message-monitor')
         api = Api(app)
         lock = multiprocessing.Lock()
@@ -387,7 +388,7 @@ def test_tests(tests, opts_or_file=None, profile=None, state_monitor_function=No
         message_monitor.start()
         message_api_active = wait_for_message_monitor_api(message_api_port)
         if not message_api_active:
-            with test_handler.completion_cv.notify():
+            with test_handler.completion_cv:
                 test_handler.completion_cv.notify()
         if message_api_active:
             test_execution.start()
