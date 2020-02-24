@@ -84,7 +84,7 @@ def _do_env_setup():
     for machine in machines:
         subprocess.run(['VBoxManage', 'controlvm', machine['name'], 'poweroff'])
         subprocess.run(['VBoxManage', 'snapshot', machine['name'], 'restore', machine['snapshot']])
-        subprocess.run(['VBoxManage', 'startvm', machine['name'], '--type', 'headless'])
+        subprocess.run(['VBoxManage', 'startvm', machine['name']])
 
 
 def wait_init():
