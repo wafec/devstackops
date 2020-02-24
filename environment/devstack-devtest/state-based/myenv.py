@@ -55,12 +55,19 @@ class EnvService(Resource):
         print('env-service init test id ' + str(content['test_id']))
 
 
+def _get_state(response):
+    try:
+        return response.json()['state']
+    except:
+        return None
+
+
 def _wait_for_state(expected_state, url):
     expected_state_list = expected_state if isinstance(expected_state, list) else [expected_state]
-    observed_state = requests.get(url).json()['state']
+    observed_state = _get_state(requests.get(url))
     while observed_state not in expected_state_list:
         time.sleep(0.5)
-        observed_state = requests.get(url).json()['state']
+        observed_state = _get_state(requests.get(url))
     if observed_state in expected_state_list:
         return observed_state
     return None
