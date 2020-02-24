@@ -1,11 +1,10 @@
 import sqlite3
 import multiprocessing
+import threading
 import datetime
 
 
 CONNECTION_STRING = 'tests.db'
-MESSAGE_ADD_LOCK = multiprocessing.Lock()
-INJECTION_ADD_LOCK = multiprocessing.Lock()
 
 
 class DatabaseError(Exception):
@@ -16,7 +15,7 @@ def experiment_add(target):
     con = sqlite3.connect(CONNECTION_STRING)
     with con:
         cur = con.cursor()
-        cur.execute("SELECT MAX(IFNULL(EXP_ID, 0)) + 1 FROM EXPERIMENT")
+        cur.execute("SELECT IFNULL(MAX(EXP_ID), O) + 1 FROM EXPERIMENT")
         row = cur.fetchone()
         id = row[0]
         cur.execute("INSERT INTO EXPERIMENT (EXP_ID, EXP_TARGET) VALUES (?, ?)", (id, target))
@@ -27,7 +26,7 @@ def test_add(test_number, exp_id):
     con = sqlite3.connect(CONNECTION_STRING)
     with con:
         cur = con.cursor()
-        cur.execute("SELECT MAX(IFNULL(TEST_ID, 0)) + 1 FROM TEST")
+        cur.execute("SELECT IFNULL(MAX(TEST_ID), 0) + 1 FROM TEST")
         row = cur.fetchone()
         id = row[0]
         cur.execute("INSERT INTO TEST (TEST_ID, TEST_NUMBER, EXP_ID) VALUES (?, ?, ?)", (id, test_number, exp_id))
@@ -36,9 +35,9 @@ def test_add(test_number, exp_id):
 
 def message_add(test_id, message_src, message_dst, message_key, message_payload, message_action):
     con = sqlite3.connect(CONNECTION_STRING)
-    with con, MESSAGE_ADD_LOCK:
+    with con:
         cur = con.cursor()
-        cur.execute("SELECT MAX(IFNULL(MESSAGE_ID, 0)) + 1 FROM MESSAGE")
+        cur.execute("SELECT IFNULL(MAX(MESSAGE_ID), 0) + 1 FROM MESSAGE")
         row = cur.fetchone()
         id = row[0]
         cur.execute("INSERT INTO MESSAGE "
@@ -65,9 +64,9 @@ def injection_list_params(test_number):
 def injection_add(message_id, injection_param, injection_value, injection_mutation, injection_param_type, injection_operator):
     con = sqlite3.connect(CONNECTION_STRING)
     result = None
-    with con, INJECTION_ADD_LOCK:
+    with con:
         cur = con.cursor()
-        cur.execute("SELECT MAX(IFNULL(INJECTION_ID, 0)) + 1 FROM INJECTION")
+        cur.execute("SELECT IFNULL(MAX(INJECTION_ID), 0) + 1 FROM INJECTION")
         row = cur.fetchone()
         id = row[0]
         try:
@@ -101,11 +100,22 @@ def injection_count(test_id):
         return row[0]
 
 
+def injection_count_by_test_number(test_number):
+    con = sqlite3.connect(CONNECTION_STRING)
+    with con:
+        cur = con.cursor()
+        cur.execute('SELECT COUNT(*) FROM INJECTION I, MESSAGE M, TEST T WHERE '
+                    'M.TEST_ID = T.TEST_ID AND T.TEST_NUMBER = :TEST_NUMBER AND I.MESSAGE_ID = M.MESSAGE_ID ',
+                    { 'TEST_NUMBER': test_number })
+        row = cur.fetchone()
+        return row[0]
+
+
 def output_add(test_id, output_content):
     con = sqlite3.connect(CONNECTION_STRING)
     with con:
         cur = con.cursor()
-        cur.execute("SELECT MAX(IFNULL(OUT_ID, 0)) + 1 FROM TEST_OUTPUT")
+        cur.execute("SELECT IFNULL(MAX(OUT_ID), 0) + 1 FROM TEST_OUTPUT")
         row = cur.fetchone()
         id = row[0]
         cur.execute("INSERT INTO TEST_OUTPUT (OUT_ID, TEST_ID, OUT_DATE, OUT_CONTENT)"
@@ -120,7 +130,7 @@ def control_add(test_id, state):
     con = sqlite3.connect(CONNECTION_STRING)
     with con:
         cur = con.cursor()
-        cur.execute("SELECT MAX(IFNULL(CONTROL_ID, 0)) + 1 FROM CONTROL")
+        cur.execute("SELECT IFNULL(MAX(CONTROL_ID), 0) + 1 FROM CONTROL")
         row = cur.fetchone()
         id = row[0]
         cur.execute("INSERT INTO CONTROL (CONTROL_ID, TEST_ID, CONTROL_STATE, CONTROL_DATE) VALUES (?, ?, ?, ?)", (id, test_id, state, datetime.datetime.now()))

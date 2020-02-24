@@ -225,15 +225,17 @@ class OutputMonitorApi(Resource):
 
 
 class MessageMonitorApi(Resource):
-    def __init__(self, test_handler, injection_enabled=False):
+    def __init__(self, test_handler, injection_enabled=False, lock=None):
         self._test_handler = test_handler
         self._monitor_injection_enabled = injection_enabled
+        self._lock = lock if lock is not None else multiprocessing.Lock()
 
     def _add_injection(self, message_id, path, value, mutation, param_type, name):
-        try:
-            return database.injection_add(message_id, path, value, mutation, param_type, name)
-        except database.DatabaseError:
-            return database.injection_add(message_id, path, value, 'unsupported type', param_type, name)
+        with self._lock:
+            try:
+                return database.injection_add(message_id, path, value, mutation, param_type, name)
+            except database.DatabaseError:
+                return database.injection_add(message_id, path, value, 'unsupported type', param_type, name)
 
     def _monitor_injection(self, message_args, message_id):
         if database.injection_count(self._test_handler.test_id) > 0:
@@ -288,9 +290,10 @@ class MessageMonitorApi(Resource):
             if 'args' in message_payload:
                 message_args = message_payload['args']
             if self._test_handler.test_id:
-                message_id = database.message_add(self._test_handler.test_id,
-                                                  message_src, message_dst, message_key, json.dumps(message_payload),
-                                                  message_action)
+                with self._lock:
+                    message_id = database.message_add(self._test_handler.test_id,
+                                                      message_src, message_dst, message_key, json.dumps(message_payload),
+                                                      message_action)
                 if message_action and message_args and self._test_handler.test_number:
                     monitor_injection_result = self._monitor_injection(message_args, message_id)
                     if monitor_injection_result is not None:
@@ -310,11 +313,13 @@ class MessageMonitor(threading.Thread):
         print('[%02d] message-monitor injection enabled %s' % (test_handler.iteration_number, 'enabled' if injection_enabled else 'disabled'))
 
     def run(self):
+        return
         app = Flask('message-monitor')
         api = Api(app)
-        api.add_resource(MessageMonitorApi, '/messages', resource_class_kwargs={ 'test_handler': self._test_handler, 'injection_enabled': self._injection_enabled })
+        lock = multiprocessing.Lock()
+        api.add_resource(MessageMonitorApi, '/messages', resource_class_kwargs={ 'test_handler': self._test_handler, 'injection_enabled': self._injection_enabled, 'lock': lock })
         api.add_resource(OutputMonitorApi, '/outputs', resource_class_kwargs={ 'test_handler': self._test_handler })
-        server = multiprocessing.Process(target=app.run, kwargs={ 'port': self._port })
+        server = multiprocessing.Process(target=app.run, kwargs={ 'port': self._port, 'host': '0.0.0.0' })
         server.start()
         with self._test_handler.completion_cv:
             self._test_handler.completion_cv.wait()
@@ -383,7 +388,7 @@ def test_tests(tests, opts_or_file=None, profile=None, state_monitor_function=No
         message_monitor.start()
         message_api_active = wait_for_message_monitor_api(message_api_port)
         if not message_api_active:
-            with test_handler.completion_cv.notify():
+            with test_handler.completion_cv:
                 test_handler.completion_cv.notify()
         if message_api_active:
             test_execution.start()

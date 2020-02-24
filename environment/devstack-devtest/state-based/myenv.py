@@ -55,12 +55,19 @@ class EnvService(Resource):
         print('env-service init test id ' + str(content['test_id']))
 
 
+def _get_state(response):
+    try:
+        return response.json()['state']
+    except:
+        return None
+
+
 def _wait_for_state(expected_state, url):
     expected_state_list = expected_state if isinstance(expected_state, list) else [expected_state]
-    observed_state = requests.get(url).json()['state']
+    observed_state = _get_state(requests.get(url))
     while observed_state not in expected_state_list:
         time.sleep(0.5)
-        observed_state = requests.get(url).json()['state']
+        observed_state = _get_state(requests.get(url))
     if observed_state in expected_state_list:
         return observed_state
     return None
@@ -107,16 +114,24 @@ def agent_collect_outputs():
     if PROFILE_CONFIG is None:
         raise ValueError('Profile cannot be none')
 
+    f_state = 0
+
     for output in agent_get_outputs():
         try:
             res = requests.post('http://' + PROFILE_CONFIG['env-api']['address'] + ':' + str(PROFILE_CONFIG['message-api']['port']) + '/outputs',
                                 json={ 'output': output })
             if res.status_code == 200:
-                print('Output sent successfully')
+                if f_state != 1:
+                    print('output-api receiving')
+                    f_state = 1
             else:
-                print('Could not send output, code %d' % res.status_code)
+                if f_state != 2:
+                    print('output-api not receiving, code' % res.status_code)
+                    f_state = 2
         except Exception as exc:
-            print('Could not send output, due to "%s"' % repr(exc))
+            if f_state != 3:
+                print('output-api not receiving, exception "%s"' % repr(exc))
+                f_state = 3
 
 
 def prepare_vars(profile):
