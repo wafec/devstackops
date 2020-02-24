@@ -145,7 +145,7 @@ def st_server_created(opts):
         if result.status and result.status.lower() == 'active':
             print('server state %s' % result.status.lower())
         else:
-            print('invalid server state %s' % result.status.lower())
+            print('invalid server state (status=%s, task=%s, power=%s, vm=%s)' % (result.status.lower(), result.task_state, str(result.power_state), result.vm_state))
             raise StateMonitorException('invalid server state')
     except openstack.exceptions.InvalidRequest:
         raise StateMonitorException('server invalid request')
