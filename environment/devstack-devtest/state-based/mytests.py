@@ -38,7 +38,7 @@ def test_n_times():
 def test_one():
     test_number = 1
     experiment_id = 1
-    go_test(test_number, experiment_id, targets=(2, 3))
+    go_test(test_number, experiment_id, targets=[4])
 
 
 test_one()
