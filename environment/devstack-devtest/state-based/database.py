@@ -33,6 +33,41 @@ def test_add(test_number, exp_id):
         return id
 
 
+def test_change_mode(test_id, test_mode='classic'):
+    con = sqlite3.connect(CONNECTION_STRING)
+    with con:
+        cur = con.cursor()
+        cur.execute('UPDATE TEST SET TEST_MODE = :TEST_MODE WHERE TEST_ID = :TEST_ID', {
+            'TEST_ID': test_id,
+            'TEST_MODE': test_mode
+        })
+
+
+def test_get_mode(test_id):
+    con = sqlite3.connect(CONNECTION_STRING)
+    with con:
+        cur = con.cursor()
+        cur.execute('SELECT TEST_MODE FROM TEST WHERE TEST_ID = :TEST_ID', { 'TEST_ID': test_id })
+        row = cur.fetchone()
+        return row[0]
+
+
+def test_it_inc(test_id):
+    con = sqlite3.connect(CONNECTION_STRING)
+    with con:
+        cur = con.cursor()
+        cur.execute('UPDATE TEST SET TEST_IT = TEST_IT + 1 WHERE TEST_ID = :TEST_ID', { 'TEST_ID': test_id })
+
+
+def test_get_it(test_id):
+    con = sqlite3.connect(CONNECTION_STRING)
+    with con:
+        cur = con.cursor()
+        cur.execute('SELECT TEST_IT FROM TEST WHERE TEST_ID = :TEST_ID', { 'TEST_ID': test_id })
+        test_it = cur.fetchone()[0]
+        return test_it
+
+
 def message_add(test_id, message_src, message_dst, message_key, message_payload, message_action):
     con = sqlite3.connect(CONNECTION_STRING)
     with con:
@@ -168,3 +203,11 @@ def control_ret_last_test_id():
         cur.execute('SELECT IFNULL(TEST_ID, -1) FROM CONTROL ORDER BY CONTROL_DATE DESC')
         row = cur.fetchone()
         return row[0]
+
+
+def logs_add(source, content, test_id):
+    con = sqlite3.connect(CONNECTION_STRING)
+    with con:
+        cur = con.cursor()
+        cur.execute('INSERT INTO TEST_LOG (log_content, log_source, test_id, log_date) VALUES '
+                    '(?, ?, ?, ?)', (content, source, test_id, datetime.datetime.now()))

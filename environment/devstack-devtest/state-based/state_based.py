@@ -112,16 +112,16 @@ class TestHandler(object):
         self._instances = {}
         self.test_id = test_id
         self.test_number = test_number
+        self.targets = []
 
     def start_iteration_counting(self):
-        self._iteration_number = 0
+        pass
 
     def stop_iteration_counting(self):
-        self._iteration_number = None
+        pass
 
     def increment_iteration_by_one(self):
-        if self._iteration_number is not None:
-            self._iteration_number = self._iteration_number + 1
+        database.test_it_inc(self.test_id)
 
     @property
     def exceptions(self):
@@ -133,7 +133,7 @@ class TestHandler(object):
 
     @property
     def iteration_number(self):
-        return 0 if not self._iteration_number else self._iteration_number
+        return database.test_get_it(self.test_id)
 
     @property
     def instances(self):
@@ -148,10 +148,16 @@ class TestSuiteExecution(threading.Thread):
     def run(self):
         self._test_handler.status = TestHandler.STARTED
         self._test_handler.start_iteration_counting()
-        for test in self._test_handler.tests:
+        for test, index in zip(self._test_handler.tests, range(len(self._test_handler.tests))):
+            if index in self._test_handler.targets:
+                database.test_change_mode(self._test_handler.test_id, 'injection')
+            else:
+                database.test_change_mode(self._test_handler.test_id, 'classic')
             self._test_handler.statem_ev.wait()
             self._test_handler.statem_ev.clear()
             print('[%02d] run test' % self._test_handler.iteration_number)
+            database.logs_add('test_runner', 'running input of number %d' % self._test_handler.iteration_number,
+                              self._test_handler.test_id)
             self._test_handler.current_test = test
             try:
                 self._test_handler.current_result = test.func()
@@ -207,6 +213,7 @@ class StateMonitor(threading.Thread):
                 try:
                     result = self.func()
                     print('[%02d] state-monitor result = %s' % (self._test_handler.iteration_number, str(result)))
+                    database.logs_add('state_monitor', 'result = %s' % str(result), self._test_handler.test_id)
                 except Exception as monitor_exc:
                     self._test_handler.exceptions.append(monitor_exc)
                 self._test_handler.execution_cv.notify()
@@ -277,7 +284,9 @@ class MessageMonitorApi(Resource):
     def post(self):
         content = request.json
         body = None
-        if self._monitor_injection_enabled:
+        mode = database.test_get_mode(self._test_handler.test_id)
+        print('[%02d] message-api mode %s' % (self._test_handler.iteration_number, mode))
+        if self._monitor_injection_enabled and mode == 'injection':
             message_src = content['source']
             message_dst = content['destination']
             message_key = content['routing_key']
@@ -313,10 +322,10 @@ class MessageMonitor(threading.Thread):
         print('[%02d] message-monitor injection enabled %s' % (test_handler.iteration_number, 'enabled' if injection_enabled else 'disabled'))
 
     def run(self):
-        return
         app = Flask('message-monitor')
         api = Api(app)
         lock = multiprocessing.Lock()
+        logs_lock = multiprocessing.Lock()
         api.add_resource(MessageMonitorApi, '/messages', resource_class_kwargs={ 'test_handler': self._test_handler, 'injection_enabled': self._injection_enabled, 'lock': lock })
         api.add_resource(OutputMonitorApi, '/outputs', resource_class_kwargs={ 'test_handler': self._test_handler })
         server = multiprocessing.Process(target=app.run, kwargs={ 'port': self._port, 'host': '0.0.0.0' })

@@ -6,6 +6,7 @@ from collections import Iterable
 from pygments import highlight, lexers, formatters
 import time
 import threading
+import database
 
 
 class TestFunc:
@@ -119,7 +120,9 @@ def st_flavor_created(opts):
         if not result:
             raise StateMonitorException('flavor result None')
         print('flavor %s created' % result.id)
+        database.logs_add('st_flavor', 'flavor created', test_handler.test_id)
     except openstack.exceptions.InvalidRequest:
+        database.logs_add('st_flavor', 'flavor invalid request', test_handler.test_id)
         raise StateMonitorException('flavor invalid request ')
 
 
@@ -131,7 +134,9 @@ def st_image_created(opts):
         if not result:
             raise StateMonitorException('image result None')
         print('image %s created' % result.id)
+        database.logs_add('st_image', 'image created', test_handler.test_id)
     except openstack.exceptions.InvalidRequest:
+        database.logs_add('st_image', 'image invalid request', test_handler.test_id)
         raise StateMonitorException('image invalid request')
 
 
@@ -144,10 +149,15 @@ def st_server_created(opts):
             raise StateMonitorException('server result None')
         if result.status and result.status.lower() == 'active':
             print('server state %s' % result.status.lower())
+            database.logs_add('st_server', 'correct server state %s' % result.status.lower(), test_handler.test_id)
         else:
             print('invalid server state (status=%s, task=%s, power=%s, vm=%s)' % (result.status.lower(), result.task_state, str(result.power_state), result.vm_state))
+            database.logs_add('st_server', 'invalid server state (status=%s, task_state=%s, power_state=%s, vm_state=%s)' % (
+                result.status, result.task_state, result.power_state, result.vm_state
+            ), test_handler.test_id)
             raise StateMonitorException('invalid server state')
     except openstack.exceptions.InvalidRequest:
+        database.logs_add('st_server', 'invalid server request', test_handler.test_id)
         raise StateMonitorException('server invalid request')
 
 
@@ -158,7 +168,25 @@ def st_volume_created(opts):
         result = conn.block_storage.get_volume(test_handler.current_result)
         if not result:
             raise StateMonitorException('volume result None')
-        print('volume %s created' % result.id)
+        if result.status == 'available':
+            print('volume %s created' % result.id)
+            database.logs_add('st_volume', 'volume created', test_handler.test_id)
+        else:
+            raise StateMonitorException('invalid volume status %s' % result.status)
+    except openstack.exceptions.InvalidRequest:
+        database.logs_add('st_volume', 'volume invalid request', test_handler.test_id)
+        raise StateMonitorException('volume invalid request')
+
+
+@st_wait()
+def st_volume_attached(opts):
+    test_handler, conn = opts['test_handler'], opts['conn']
+    try:
+        result = conn.block_storage.get_volume(test_handler.instances['voltest2'])
+        if result.status == 'in-use':
+            print('volume status %s' % result.status)
+        else:
+            raise StateMonitorException('invalid volume state %s' % result.status)
     except openstack.exceptions.InvalidRequest:
         raise StateMonitorException('volume invalid request')
 
