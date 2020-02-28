@@ -11,6 +11,7 @@ test-case:
         value: 2
     states:
       - name: flavor_created
+    is_targeted: no
   - event: image.create_image
     args:
       - name: name
@@ -19,6 +20,7 @@ test-case:
         value: ./images/cirros-0.4.0-x86_64-disk.img
     states:
       - name: image_created
+    is_targeted: no
   - event: block_storage.create_volume
     args:
       - name: name
@@ -27,6 +29,7 @@ test-case:
         value: 2
     states:
       - name: volume_created
+    is_targeted: no
   - event: compute.create_server
     args:
       - name: name
@@ -39,6 +42,7 @@ test-case:
         value: auto
     states:
       - name: server_created
+    is_targeted: no
   - event: compute.create_volume_attachment
     args:
       - name: server
@@ -47,3 +51,4 @@ test-case:
         value: voltest2
     states:
       - name: volume_attached
+    is_targeted: no
