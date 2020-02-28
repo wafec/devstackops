@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="20131001" xmlns:xmi="http://www.omg.org/spec/XMI/20131001" xmlns:uml="http://www.eclipse.org/uml2/5.0.0/UML" xmi:id="_CeP_cFjqEeqFwOVcfm0o_g" name="compute_behavior">
+  <packageImport xmi:type="uml:PackageImport" xmi:id="_Ck1IkFjqEeqFwOVcfm0o_g">
+    <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#_0"/>
+  </packageImport>
+  <packagedElement xmi:type="uml:Package" xmi:id="_SzZo8FjqEeqFwOVcfm0o_g" name="main">
+    <packagedElement xmi:type="uml:Class" xmi:id="_hideYFjqEeqFwOVcfm0o_g" name="ComputeVmTestContext" classifierBehavior="_jTMcMFjqEeqFwOVcfm0o_g">
+      <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_jTMcMFjqEeqFwOVcfm0o_g" name="VmTestMachine">
+        <region xmi:type="uml:Region" xmi:id="_lGfl0FjqEeqFwOVcfm0o_g" name="VmTestMachineMainRegion">
+          <transition xmi:type="uml:Transition" xmi:id="_kpkxkFjwEeqFwOVcfm0o_g" source="_vLxMsFjqEeqFwOVcfm0o_g" target="_uhfgoFjqEeqFwOVcfm0o_g"/>
+          <transition xmi:type="uml:Transition" xmi:id="_Rwx0sFjyEeqFwOVcfm0o_g" source="_uhfgoFjqEeqFwOVcfm0o_g" target="_oY_NIFjxEeqFwOVcfm0o_g"/>
+          <transition xmi:type="uml:Transition" xmi:id="_AvhdsFjzEeqFwOVcfm0o_g" source="_oY_NIFjxEeqFwOVcfm0o_g" target="_2pyZQFjxEeqFwOVcfm0o_g"/>
+          <subvertex xmi:type="uml:State" xmi:id="_uhfgoFjqEeqFwOVcfm0o_g" name="Create"/>
+          <subvertex xmi:type="uml:Pseudostate" xmi:id="_vLxMsFjqEeqFwOVcfm0o_g" name=""/>
+          <subvertex xmi:type="uml:State" xmi:id="_oY_NIFjxEeqFwOVcfm0o_g" name="Created">
+            <region xmi:type="uml:Region" xmi:id="_r-giUVjxEeqFwOVcfm0o_g" name="Region1">
+              <transition xmi:type="uml:Transition" xmi:id="_SoanUFjyEeqFwOVcfm0o_g" source="_wDR_UFjxEeqFwOVcfm0o_g" target="_w_eMsFjvEeqFwOVcfm0o_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_TXU7wFjyEeqFwOVcfm0o_g" source="_w_eMsFjvEeqFwOVcfm0o_g" target="_LJLOkFjyEeqFwOVcfm0o_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_WVRTkFjyEeqFwOVcfm0o_g" source="_LJLOkFjyEeqFwOVcfm0o_g" target="_w_eMsFjvEeqFwOVcfm0o_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_aSAO4FjyEeqFwOVcfm0o_g" source="_w_eMsFjvEeqFwOVcfm0o_g" target="_Tfd2AFjwEeqFwOVcfm0o_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_b7gjUFjyEeqFwOVcfm0o_g" source="_Tfd2AFjwEeqFwOVcfm0o_g" target="_w_eMsFjvEeqFwOVcfm0o_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_e6OXMFjyEeqFwOVcfm0o_g" source="_w_eMsFjvEeqFwOVcfm0o_g" target="_JgKUQFjwEeqFwOVcfm0o_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_fs_38FjyEeqFwOVcfm0o_g" source="_JgKUQFjwEeqFwOVcfm0o_g" target="_w_eMsFjvEeqFwOVcfm0o_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_4kTIsFjyEeqFwOVcfm0o_g" source="_w_eMsFjvEeqFwOVcfm0o_g" target="_GAIjEFjwEeqFwOVcfm0o_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_6pKjcFjyEeqFwOVcfm0o_g" source="_GAIjEFjwEeqFwOVcfm0o_g" target="_w_eMsFjvEeqFwOVcfm0o_g"/>
+              <subvertex xmi:type="uml:State" xmi:id="_JgKUQFjwEeqFwOVcfm0o_g" name="Suspended"/>
+              <subvertex xmi:type="uml:State" xmi:id="_GAIjEFjwEeqFwOVcfm0o_g" name="Paused"/>
+              <subvertex xmi:type="uml:State" xmi:id="_Tfd2AFjwEeqFwOVcfm0o_g" name="Resized"/>
+              <subvertex xmi:type="uml:State" xmi:id="_w_eMsFjvEeqFwOVcfm0o_g" name="Running"/>
+              <subvertex xmi:type="uml:Pseudostate" xmi:id="_wDR_UFjxEeqFwOVcfm0o_g" name=""/>
+              <subvertex xmi:type="uml:State" xmi:id="_LJLOkFjyEeqFwOVcfm0o_g" name="ShuttedOff"/>
+            </region>
+          </subvertex>
+          <subvertex xmi:type="uml:State" xmi:id="_2pyZQFjxEeqFwOVcfm0o_g" name="Deleted"/>
+        </region>
+      </ownedBehavior>
+    </packagedElement>
+  </packagedElement>
+</uml:Model>
