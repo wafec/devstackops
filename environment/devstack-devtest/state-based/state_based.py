@@ -90,7 +90,8 @@ def tests_from_file(filepath):
             for state in test['states']:
                 test_entry.states.append(State(state['name']))
             test_case.append(test_entry)
-        return test_case
+        targets = [index for test, index in zip(tests['test-case'], range(len(tests['test-case']))) if test['is_targeted']]
+        return test_case, targets
     return None
 
 
@@ -149,6 +150,7 @@ class TestSuiteExecution(threading.Thread):
         self._test_handler.status = TestHandler.STARTED
         self._test_handler.start_iteration_counting()
         for test, index in zip(self._test_handler.tests, range(len(self._test_handler.tests))):
+            database.it_add(self._test_handler.test_id, test.event)
             if index in self._test_handler.targets:
                 database.test_change_mode(self._test_handler.test_id, 'injection')
             else:
@@ -176,6 +178,7 @@ class TestSuiteExecution(threading.Thread):
                 self._test_handler.execution_cv.notify()
             self._test_handler.increment_iteration_by_one()
         print('test-execution finished')
+        database.test_set_errors(self._test_handler.test_id, len(self._test_handler.exceptions) > 0)
         with self._test_handler.completion_cv:
             self._test_handler.completion_cv.notify()
         self._test_handler.stop_iteration_counting()
@@ -286,23 +289,23 @@ class MessageMonitorApi(Resource):
         body = None
         mode = database.test_get_mode(self._test_handler.test_id)
         print('[%02d] message-api mode %s' % (self._test_handler.iteration_number, mode))
-        if self._monitor_injection_enabled and mode == 'injection':
-            message_src = content['source']
-            message_dst = content['destination']
-            message_key = content['routing_key']
-            body = json.loads(content['body'])
-            message_payload = json.loads(body['oslo.message'])
-            message_action = None
-            message_args = None
-            if 'method' in message_payload:
-                message_action = message_payload['method']
-            if 'args' in message_payload:
-                message_args = message_payload['args']
-            if self._test_handler.test_id:
-                with self._lock:
-                    message_id = database.message_add(self._test_handler.test_id,
-                                                      message_src, message_dst, message_key, json.dumps(message_payload),
-                                                      message_action)
+        message_src = content['source']
+        message_dst = content['destination']
+        message_key = content['routing_key']
+        body = json.loads(content['body'])
+        message_payload = json.loads(body['oslo.message'])
+        message_action = None
+        message_args = None
+        if 'method' in message_payload:
+            message_action = message_payload['method']
+        if 'args' in message_payload:
+            message_args = message_payload['args']
+        if message_action and message_args and self._test_handler.test_id:
+            with self._lock:
+                message_id = database.message_add(self._test_handler.test_id,
+                                                  message_src, message_dst, message_key, json.dumps(message_payload),
+                                                  message_action, len(mydictutils.dict_collect_params(message_args)))
+            if self._monitor_injection_enabled and mode == 'injection':
                 if message_action and message_args and self._test_handler.test_number:
                     monitor_injection_result = self._monitor_injection(message_args, message_id)
                     if monitor_injection_result is not None:

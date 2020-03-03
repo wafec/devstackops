@@ -68,17 +68,74 @@ def test_get_it(test_id):
         return test_it
 
 
-def message_add(test_id, message_src, message_dst, message_key, message_payload, message_action):
+def test_set_errors(test_id, has_errors):
+    con = sqlite3.connect(CONNECTION_STRING)
+    with con:
+        cur = con.cursor()
+        cur.execute('UPDATE TEST SET TEST_HAS_ERRORS = ? WHERE TEST_ID = ?', (0 if not has_errors else 1, test_id))
+
+
+def test_get_errors(test_id):
+    con = sqlite3.connect(CONNECTION_STRING)
+    with con:
+        cur = con.cursor()
+        cur.execute('SELECT TEST_HAS_ERRORS FROM TEST WHERE TEST_ID = ?', [test_id])
+        row = cur.fetchone()
+        return row[0]
+
+
+def it_add(test_id, event):
+    con = sqlite3.connect(CONNECTION_STRING)
+    with con:
+        con.isolation_level = None
+        cur = con.cursor()
+        cur.execute('begin')
+        try:
+            cur.execute('SELECT IFNULL(MAX(IT_ID), 0) + 1 FROM TEST_ITERATION')
+            id = cur.fetchone()[0]
+            cur.execute('SELECT TEST_IT FROM TEST WHERE TEST_ID = ?', [test_id])
+            number = cur.fetchone()[0]
+            cur.execute('INSERT INTO TEST_ITERATION (IT_ID, TEST_ID, IT_NUMBER, IT_EVENT, IT_DATE) VALUES '
+                        '(?, ?, ?, ?, ?)', (id, test_id, number, event, datetime.datetime.now()))
+            cur.execute('commit')
+            return id
+        except con.Error:
+            print('failed it add')
+            cur.execute('rollback')
+
+
+def it_get_current_id(test_id):
+    con = sqlite3.connect(CONNECTION_STRING)
+    with con:
+        con.isolation_level = None
+        cur = con.cursor()
+        cur.execute('begin')
+        try:
+            cur.execute('SELECT I.IT_ID FROM TEST_ITERATION I, TEST T WHERE I.TEST_ID = T.TEST_ID AND T.TEST_ID = ?', [test_id])
+            id = cur.fetchone()[0]
+            return id
+        except con.Error:
+            print('failed get current it id')
+            cur.execute('rollback')
+
+
+def message_add(test_id, message_src, message_dst, message_key, message_payload, message_action, message_params_count):
     con = sqlite3.connect(CONNECTION_STRING)
     with con:
         cur = con.cursor()
         cur.execute("SELECT IFNULL(MAX(MESSAGE_ID), 0) + 1 FROM MESSAGE")
         row = cur.fetchone()
         id = row[0]
+        cur.execute('SELECT I.IT_ID FROM TEST T, TEST_ITERATION I WHERE I.TEST_ID = T.TEST_ID AND T.TEST_ID = ? AND T.TEST_IT = I.IT_NUMBER', [test_id])
+        row = cur.fetchone()
+        if row:
+            it_id = row[0]
+        else:
+            it_id = None
         cur.execute("INSERT INTO MESSAGE "
-                    "(MESSAGE_ID, TEST_ID, MESSAGE_SRC, MESSAGE_DST, MESSAGE_KEY, MESSAGE_PAYLOAD, MESSAGE_ACTION, MESSAGE_DATE)"
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                    (id, test_id, message_src, message_dst, message_key, message_payload, message_action, datetime.datetime.now()))
+                    "(MESSAGE_ID, TEST_ID, MESSAGE_SRC, MESSAGE_DST, MESSAGE_KEY, MESSAGE_PAYLOAD, MESSAGE_ACTION, MESSAGE_DATE, IT_ID, MESSAGE_PARAMS_COUNT)"
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    (id, test_id, message_src, message_dst, message_key, message_payload, message_action, datetime.datetime.now(), it_id, message_params_count))
         return id
 
 
@@ -153,10 +210,16 @@ def output_add(test_id, output_content):
         cur.execute("SELECT IFNULL(MAX(OUT_ID), 0) + 1 FROM TEST_OUTPUT")
         row = cur.fetchone()
         id = row[0]
-        cur.execute("INSERT INTO TEST_OUTPUT (OUT_ID, TEST_ID, OUT_DATE, OUT_CONTENT)"
+        cur.execute('SELECT I.IT_ID FROM TEST_ITERATION I, TEST T WHERE T.TEST_ID = I.TEST_ID AND T.TEST_ID = ? AND I.IT_NUMBER = T.TEST_IT', [test_id])
+        row = cur.fetchone()
+        if row:
+            it_id = row[0]
+        else:
+            it_id = None
+        cur.execute("INSERT INTO TEST_OUTPUT (OUT_ID, TEST_ID, OUT_DATE, OUT_CONTENT, IT_ID)"
                     "VALUES"
-                    "(?, ? ,?, ?)", (
-            id, test_id, datetime.datetime.now(), output_content
+                    "(?, ? ,?, ?, ?)", (
+            id, test_id, datetime.datetime.now(), output_content, it_id
         ))
         return id
 
