@@ -1,0 +1,40 @@
+!setup
+generic:
+  classpath: ../bin/statemutest-all.jar
+  coverageTransitionSetIdentifier: name
+  inputQualifiedNames:
+  - main.Pause
+  - main.Unpause
+  - main.Suspend
+  - main.Resume
+  - main.Restart
+  - main.Shutoff
+  - main.Resize
+  - main.ResizeCancel
+  - main.ResizeConfirm
+  - main.Start
+  - main.Shelve
+  - main.Unshelve
+  - main.BuildRun
+  - main.Delete
+  instanceSpecFilePath: compute_spec.yaml
+  knowableStateIdentities:
+  - Create
+  - Paused
+  - Suspended
+  - Stopped
+  - Created
+  - Deleted
+  - Stopped
+  - Running
+  - Shelved
+  - Resized
+  stateIdentitiesIdentifier: name
+  testClassQualifiedName: main.ComputeVmTestContext
+  xmiFilePath: ../compute_behavior.uml
+method: !mgeovsl
+  maxVars: 30
+  minVars: 10
+  numberOfIndependentRuns: 1
+  numberOfIterations: 5000
+  tau: 0.5
