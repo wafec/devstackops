@@ -150,11 +150,13 @@ class TestSuiteExecution(threading.Thread):
         self._test_handler.status = TestHandler.STARTED
         self._test_handler.start_iteration_counting()
         for test, index in zip(self._test_handler.tests, range(len(self._test_handler.tests))):
-            database.it_add(self._test_handler.test_id, test.event)
+            it_id = database.it_add(self._test_handler.test_id, test.event)
             if index in self._test_handler.targets:
-                database.test_change_mode(self._test_handler.test_id, 'injection')
+                mode = 'injection'
             else:
-                database.test_change_mode(self._test_handler.test_id, 'classic')
+                mode = 'classic'
+            database.test_change_mode(self._test_handler.test_id, mode)
+            database.it_register_mode(it_id, mode)
             self._test_handler.statem_ev.wait()
             self._test_handler.statem_ev.clear()
             print('[%02d] run test' % self._test_handler.iteration_number)

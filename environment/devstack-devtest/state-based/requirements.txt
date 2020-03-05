@@ -8,3 +8,4 @@ openstacksdk
 pygments
 hypothesis
 sh
+pyyaml

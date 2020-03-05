@@ -99,9 +99,19 @@ def it_add(test_id, event):
                         '(?, ?, ?, ?, ?)', (id, test_id, number, event, datetime.datetime.now()))
             cur.execute('commit')
             return id
-        except con.Error:
-            print('failed it add')
+        except con.Error as err:
+            print('failed it add %s' % repr(err))
             cur.execute('rollback')
+
+
+def it_register_mode(it_id, mode):
+    con = sqlite3.connect(CONNECTION_STRING)
+    with con:
+        cur = con.cursor()
+        cur.execute('UPDATE TEST_ITERATION SET IT_MODE = :MODE WHERE IT_ID = :ID', {
+            'MODE': mode,
+            'ID': it_id
+        })
 
 
 def it_get_current_id(test_id):
