@@ -1,4 +1,4 @@
 !setup
-generic:
-  coverageTransitionSet:
-  - t_shelve
+generic: 
+   coverageTransitionSet:
+   - t_shelve

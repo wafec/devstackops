@@ -1,0 +1,53 @@
+!setup
+generic: 
+   classpath: ../bin/statemutest-all.jar
+   coverageTransitionSet: 
+   - t_BuildRun
+   - t_Start
+   - t_Shutoff
+   - t_Resize_stopped
+   - t_ResizeConfirm_stopped
+   - t_Resize_running
+   - t_ResizeConfirm_running
+   - t_Pause
+   - t_Unpause
+   - t_Shelve
+   - t_Unshelve
+   - t_Suspend
+   - t_Resume
+   - t_Delete
+   coverageTransitionSetIdentifier: name
+   inputQualifiedNames: 
+   - graphwalker.e_BuildRun
+   - graphwalker.e_Start
+   - graphwalker.e_Shutoff
+   - graphwalker.e_Resize
+   - graphwalker.e_ResizeConfirm
+   - graphwalker.e_Pause
+   - graphwalker.e_Unpause
+   - graphwalker.e_Shelve
+   - graphwalker.e_Unshelve
+   - graphwalker.e_Delete
+   - graphwalker.e_Suspend
+   - graphwalker.e_Resume
+   instanceSpecFilePath: compute_spec.yaml
+   knowableStateIdentities: 
+   - v_Create
+   - v_Running
+   - v_Stopped
+   - v_Resized
+   - v_Paused
+   - v_Shelved
+   - v_Created
+   - v_Deleted
+   - v_Suspended
+   stateIdentities: []
+   stateIdentitiesIdentifier: name
+   testClassQualifiedName: graphwalker.GwComputeContext
+   xmiFilePath: ../compute_behavior.uml
+method: !mgeovsl
+   maxVars: 100
+   minVars: 10
+   numberOfIndependentRuns: 3
+   numberOfIterations: 150000
+   tau: 0.5
