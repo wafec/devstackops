@@ -1,0 +1,744 @@
+[
+    {
+        "test-case": [
+            {
+                "args": [
+                    {
+                        "name": "name",
+                        "value": "server_test"
+                    },
+                    {
+                        "name": "flavor_id",
+                        "value": "flavor_test"
+                    },
+                    {
+                        "name": "image_id",
+                        "value": "image_test"
+                    },
+                    {
+                        "name": "networks",
+                        "value": "auto"
+                    }
+                ],
+                "event": "compute.create_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_created"
+                    },
+                    {
+                        "name": "server_running"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.suspend_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_suspended"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.resume_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_running"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    },
+                    {
+                        "name": "flavor",
+                        "value": "1"
+                    }
+                ],
+                "event": "compute.resize_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_resized"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.confirm_server_resize",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_running"
+                    }
+                ]
+            }
+        ],
+        "test-name": "test-case-Jimmie.yaml"
+    },
+    {
+        "test-case": [
+            {
+                "args": [
+                    {
+                        "name": "name",
+                        "value": "server_test"
+                    },
+                    {
+                        "name": "flavor_id",
+                        "value": "flavor_test"
+                    },
+                    {
+                        "name": "image_id",
+                        "value": "image_test"
+                    },
+                    {
+                        "name": "networks",
+                        "value": "auto"
+                    }
+                ],
+                "event": "compute.create_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_created"
+                    },
+                    {
+                        "name": "server_running"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.pause_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_paused"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.unpause_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_running"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.suspend_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_suspended"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.resume_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_running"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.stop_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_stopped"
+                    }
+                ]
+            }
+        ],
+        "test-name": "test-case-Sonia.yaml"
+    },
+    {
+        "test-case": [
+            {
+                "args": [
+                    {
+                        "name": "name",
+                        "value": "server_test"
+                    },
+                    {
+                        "name": "flavor_id",
+                        "value": "flavor_test"
+                    },
+                    {
+                        "name": "image_id",
+                        "value": "image_test"
+                    },
+                    {
+                        "name": "networks",
+                        "value": "auto"
+                    }
+                ],
+                "event": "compute.create_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_created"
+                    },
+                    {
+                        "name": "server_running"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.pause_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_paused"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.unpause_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_running"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.shelve_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_shelved"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.unshelve_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_running"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.stop_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_stopped"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.start_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_running"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    },
+                    {
+                        "name": "flavor",
+                        "value": "1"
+                    }
+                ],
+                "event": "compute.resize_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_resized"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.confirm_server_resize",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_running"
+                    }
+                ]
+            }
+        ],
+        "test-name": "test-case-Anya.yaml"
+    },
+    {
+        "test-case": [
+            {
+                "args": [
+                    {
+                        "name": "name",
+                        "value": "server_test"
+                    },
+                    {
+                        "name": "flavor_id",
+                        "value": "flavor_test"
+                    },
+                    {
+                        "name": "image_id",
+                        "value": "image_test"
+                    },
+                    {
+                        "name": "networks",
+                        "value": "auto"
+                    }
+                ],
+                "event": "compute.create_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_created"
+                    },
+                    {
+                        "name": "server_running"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.pause_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_paused"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.unpause_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_running"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.shelve_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_shelved"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.unshelve_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_running"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.stop_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_stopped"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.start_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_running"
+                    }
+                ]
+            }
+        ],
+        "test-name": "test-case-Jamarcus.yaml"
+    },
+    {
+        "test-case": [
+            {
+                "args": [
+                    {
+                        "name": "name",
+                        "value": "server_test"
+                    },
+                    {
+                        "name": "flavor_id",
+                        "value": "flavor_test"
+                    },
+                    {
+                        "name": "image_id",
+                        "value": "image_test"
+                    },
+                    {
+                        "name": "networks",
+                        "value": "auto"
+                    }
+                ],
+                "event": "compute.create_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_created"
+                    },
+                    {
+                        "name": "server_running"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.pause_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_paused"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.unpause_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_running"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    },
+                    {
+                        "name": "flavor",
+                        "value": "1"
+                    }
+                ],
+                "event": "compute.resize_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_resized"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.confirm_server_resize",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_running"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.shelve_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_shelved"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.unshelve_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_running"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.stop_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_stopped"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.start_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_running"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.suspend_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_suspended"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.resume_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_running"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.stop_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_stopped"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    },
+                    {
+                        "name": "flavor",
+                        "value": "1"
+                    }
+                ],
+                "event": "compute.resize_server",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_resized"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.confirm_server_resize",
+                "is_targeted": false,
+                "states": [
+                    {
+                        "name": "server_stopped"
+                    }
+                ]
+            },
+            {
+                "args": [
+                    {
+                        "name": "server",
+                        "value": "server_test"
+                    }
+                ],
+                "event": "compute.delete_server",
+                "is_targeted": false,
+                "states": []
+            }
+        ],
+        "test-name": "test-case-Guy.yaml"
+    }
+]

@@ -1,0 +1,196 @@
+[
+  {
+    "event": "compute.create_server",
+    "args": [
+      {
+        "name": "name",
+        "value": "server_test"
+      },
+      {
+        "name": "flavor_id",
+        "value": "flavor_test"
+      },
+      {
+        "name": "image_id",
+        "value": "image_test"
+      },
+      {
+        "name": "networks",
+        "value": "auto"
+      }
+    ],
+    "states": [
+      {
+        "name": "server_created"
+      }
+    ]
+  },
+  {
+    "event": "compute.shelve_server",
+    "args": [
+      {
+        "name": "server",
+        "value": "server_test"
+      }
+    ],
+    "states": [
+      {
+        "name": "server_shelved"
+      }
+    ]
+  },
+  {
+    "event": "compute.suspend_server",
+    "args": [
+      {
+        "name": "server",
+        "value": "server_test"
+      }
+    ],
+    "states": [
+      {
+        "name": "server_suspended"
+      }
+    ]
+  },
+  {
+    "event": "compute.stop_server",
+    "args": [
+      {
+        "name": "server",
+        "value": "server_test"
+      }
+    ],
+    "states": [
+      {
+        "name": "server_stopped"
+      }
+    ]
+  },
+  {
+    "event": "compute.start_server",
+    "args": [
+      {
+        "name": "server",
+        "value": "server_test"
+      }
+    ],
+    "states": [
+      {
+        "name": "server_started"
+      }
+    ]
+  },
+  {
+    "event": "compute.resume_server",
+    "args": [
+      {
+        "name": "server",
+        "value": "server_test"
+      }
+    ],
+    "states":[
+      {
+        "name": "server_resumed"
+      }
+    ]
+  },
+  {
+    "event": "compute.unshelve_server",
+    "args": [
+      {
+        "name": "server",
+        "value": "server_test"
+      }
+    ],
+    "states": [
+      {
+        "name": "server_unshelved"
+      }
+    ]
+  },
+  {
+    "event": "compute.resize_server",
+    "args": [
+      {
+        "name": "server",
+        "value": "server_test"
+      }
+    ],
+    "states": [
+      {
+        "name": "server_resized"
+      }
+    ]
+  },
+  {
+    "event": "compute.confirm_server_resize",
+    "args": [
+      {
+        "name": "server",
+        "value": "server_test"
+      }
+    ],
+    "states": [
+      {
+        "name": "server_resize_confirmed"
+      }
+    ]
+  },
+  {
+    "event": "compute.revert_server_resize",
+    "args": [
+      {
+        "name": "server",
+        "value": "server_test"
+      }
+    ],
+    "states": [
+      {
+        "name": "server_resize_reverted"
+      }
+    ]
+  },
+  {
+    "event": "compute.pause_server",
+    "args": [
+      {
+        "name": "server",
+        "value": "server_test"
+      }
+    ],
+    "states": [
+      {
+        "name": "server_paused"
+      }
+    ]
+  },
+  {
+    "event": "compute.unpause_server",
+    "args": [
+      {
+        "name": "server",
+        "value": "server_test"
+      }
+    ],
+    "states": [
+      {
+        "name": "server_unpaused"
+      }
+    ]
+  },
+  {
+    "event": "compute.delete_server",
+    "args": [
+      {
+        "name": "server",
+        "value": "server_test"
+      }
+    ],
+    "states": [
+      {
+        "name": "server_deleted"
+      }
+    ]
+  }
+]
