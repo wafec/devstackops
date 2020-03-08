@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from pickle import _dump
 
 import openstack
 import json
@@ -140,6 +141,11 @@ def st_image_created(opts):
         raise StateMonitorException('image invalid request')
 
 
+def _dump_invalid_server_status(result):
+    return 'invalid server state (status=%s, task=%s, power=%s, vm=%s)' % (
+          result.status.lower(), result.task_state, str(result.power_state), result.vm_state)
+
+
 @st_wait(times=60)
 def st_server_created(opts):
     test_handler, conn = opts['test_handler'], opts['conn']
@@ -182,13 +188,193 @@ def st_volume_created(opts):
 def st_volume_attached(opts):
     test_handler, conn = opts['test_handler'], opts['conn']
     try:
-        result = conn.block_storage.get_volume(test_handler.instances['voltest2'])
+        result = conn.block_storage.get_volume(test_handler.instances['volume_test'])
         if result.status == 'in-use':
             print('volume status %s' % result.status)
         else:
             raise StateMonitorException('invalid volume state %s' % result.status)
     except openstack.exceptions.InvalidRequest:
         raise StateMonitorException('volume invalid request')
+
+
+@st_wait(times=120)
+def st_server_shelved(opts):
+    test_handler, conn = opts['test_handler'], opts['conn']
+    try:
+        result = conn.compute.get_server(test_handler.instances['server_test'])
+        if result.status.lower() == 'shelved_offloaded':
+            print('server shelved %s' % result.id)
+        else:
+            print(_dump_invalid_server_status(result))
+            database.logs_add('st_server', _dump_invalid_server_status(result), test_handler.test_id)
+            raise StateMonitorException('invalid server state')
+    except openstack.exceptions.InvalidRequest:
+        raise StateMonitorException('server shelving invalid request')
+
+
+@st_wait(times=120)
+def st_server_unshelved(opts):
+    test_handler, conn = opts['test_handler'], opts['conn']
+    try:
+        result = conn.compute.get_server(test_handler.instances['server_test'])
+        if result.status.lower() == 'active':
+            print('server active %s' % result.id)
+        else:
+            print(_dump_invalid_server_status(result))
+            database.logs_add('st_server', _dump_invalid_server_status(result), test_handler.test_id)
+            raise StateMonitorException('invalid server state')
+    except openstack.exceptions.InvalidRequest:
+        raise StateMonitorException('server unshelving invalid request')
+
+
+@st_wait()
+def st_server_paused(opts):
+    test_handler, conn = opts['test_handler'], opts['conn']
+    try:
+        result = conn.compute.get_server(test_handler.instances['server_test'])
+        if result.status.lower() == 'paused':
+            print('server paused %s' % result.id)
+        else:
+            print(_dump_invalid_server_status(result))
+            database.logs_add('st_server', _dump_invalid_server_status(result), test_handler.test_id)
+            raise StateMonitorException('invalid server state')
+    except openstack.exceptions.InvalidRequest:
+        raise StateMonitorException('server pausing invalid request')
+
+
+@st_wait()
+def st_server_unpaused(opts):
+    test_handler, conn = opts['test_handler'], opts['conn']
+    try:
+        result = conn.compute.get_server(test_handler.instances['server_test'])
+        if result.status.lower() == 'active':
+            print('server unpaused %s' % result.id)
+        else:
+            print(_dump_invalid_server_status(result))
+            database.logs_add('st_server', _dump_invalid_server_status(result), test_handler.test_id)
+            raise StateMonitorException('invalid server state')
+    except openstack.exceptions.InvalidRequest:
+        raise StateMonitorException('server unpausing invalid request')
+
+
+@st_wait()
+def st_server_suspended(opts):
+    test_handler, conn = opts['test_handler'], opts['conn']
+    try:
+        result = conn.compute.get_server(test_handler.instances['server_test'])
+        if result.status.lower() == 'suspended':
+            print('server suspended %s' % result.id)
+        else:
+            print(_dump_invalid_server_status(result))
+            database.logs_add('st_server', _dump_invalid_server_status(result), test_handler.test_id)
+            raise StateMonitorException('invalid server state')
+    except openstack.exceptions.InvalidRequest:
+        raise StateMonitorException('server suspending invalid request')
+
+
+@st_wait()
+def st_server_resumed(opts):
+    test_handler, conn = opts['test_handler'], opts['conn']
+    try:
+        result = conn.compute.get_server(test_handler.instances['server_test'])
+        if result.status.lower() == 'active':
+            print('server resumed %s' % result.id)
+        else:
+            print(_dump_invalid_server_status(result))
+            database.logs_add('st_server', _dump_invalid_server_status(result), test_handler.test_id)
+            raise StateMonitorException('invalid server state')
+    except openstack.exceptions.InvalidRequest:
+        raise StateMonitorException('server resuming invalid request')
+
+
+@st_wait(times=120)
+def st_server_resized(opts):
+    test_handler, conn = opts['test_handler'], opts['conn']
+    try:
+        result = conn.compute.get_server(test_handler.instances['server_test'])
+        if result.status.lower() == 'verify_resize':
+            print('server resized %s' % result.id)
+        else:
+            print(_dump_invalid_server_status(result))
+            database.logs_add('st_server', _dump_invalid_server_status(result), test_handler.test_id)
+            raise StateMonitorException('invalid server state')
+    except openstack.exceptions.InvalidRequest:
+        raise StateMonitorException('server resizing invalid request')
+
+
+@st_wait(times=120)
+def st_server_resize_confirmed(opts):
+    test_handler, conn = opts['test_handler'], opts['conn']
+    try:
+        result = conn.compute.get_server(test_handler.instances['server_test'])
+        if result.status.lower() == 'active':
+            print('server resize confirmed %s' % result.id)
+        else:
+            print(_dump_invalid_server_status(result))
+            database.logs_add('st_server', _dump_invalid_server_status(result), test_handler.test_id)
+            raise StateMonitorException('invalid server state')
+    except openstack.exceptions.InvalidRequest:
+        raise StateMonitorException('server resize confirming invalid request')
+
+
+@st_wait(times=120)
+def st_server_resize_reverted(opts):
+    test_handler, conn = opts['test_handler'], opts['conn']
+    try:
+        result = conn.compute.get_server(test_handler.instances['server_test'])
+        if result.status.lower() == 'active':
+            print('server resize reverted %s' % result.id)
+        else:
+            print(_dump_invalid_server_status(result))
+            database.logs_add('st_server', _dump_invalid_server_status(result), test_handler.test_id)
+            raise StateMonitorException('invalid server state')
+    except openstack.exceptions.InvalidRequest:
+        raise StateMonitorException('server resize reverting invalid request')
+
+
+@st_wait(times=120)
+def st_server_stopped(opts):
+    test_handler, conn = opts['test_handler'], opts['conn']
+    try:
+        result = conn.compute.get_server(test_handler.instances['server_test'])
+        if result.status.lower() == 'shutoff':
+            print('server stopped %s' % result.id)
+        else:
+            print(_dump_invalid_server_status(result))
+            database.logs_add('st_server', _dump_invalid_server_status(result), test_handler.test_id)
+            raise StateMonitorException('invalid server state')
+    except openstack.exceptions.InvalidRequest:
+        raise StateMonitorException('server stopping invalid request')
+
+
+@st_wait(times=120)
+def st_server_started(opts):
+    test_handler, conn = opts['test_handler'], opts['conn']
+    try:
+        result = conn.compute.get_server(test_handler.instances['server_test'])
+        if result.status.lower() == 'active':
+            print('server started %s' % result.id)
+        else:
+            print(_dump_invalid_server_status(result))
+            database.logs_add('st_server', _dump_invalid_server_status(result), test_handler.test_id)
+            raise StateMonitorException('invalid server state')
+    except openstack.exceptions.InvalidRequest:
+        raise StateMonitorException('server starting invalid request')
+
+
+@st_wait(times=120)
+def set_server_deleted(opts):
+    test_handler, conn = opts['test_handler'], opts['conn']
+    try:
+        result = conn.compute.get_server(test_handler.instances['server_test'])
+        print(_dump_invalid_server_status(result))
+        database.logs_add('st_server', _dump_invalid_server_status(result), test_handler.test_id)
+        raise StateMonitorException('invalid server state')
+    except openstack.exceptions.ResourceNotFound:
+        print('server deleted')
+        pass
+    except openstack.exceptions.InvalidRequest:
+        raise StateMonitorException('server deleting invalid request')
 
 
 class StateMonitorFunction:

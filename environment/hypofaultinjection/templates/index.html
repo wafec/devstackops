@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+    <head>
+        <title>MVC Test</title>
+    </head>
+    <body>
+        <h3>Showing Names</h3>
+        <ul>
+            {% for entry in entries %}
+            <li>
+                <span>{{ entry.name }}</span>
+            </li>
+            {% else %}
+            <li>
+                <em>No entries.</em>
+            </li>
+            {% endfor %}
+        </ul>
+    </body>
+</html>

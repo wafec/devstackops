@@ -1,0 +1,9 @@
+Listing bindings
+	exchange	queue1	queue	queue1	[]
+	exchange	queue1-bridge	queue	queue1-bridge	[]
+	exchange	queue2	queue	queue2	[]
+	exchange	queue2-bridge	queue	queue2-bridge	[]
+exchange1	exchange	queue1-bridge	queue	key1	[]
+exchange1	exchange	queue1	queue	key1-origin	[]
+exchange2	exchange	queue2-bridge	queue	key2	[]
+exchange2	exchange	queue2	queue	key2-origin	[]

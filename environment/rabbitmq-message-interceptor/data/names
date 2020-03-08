@@ -1,0 +1,8 @@
+{"source_name": "", "routing_key": "queue1", "arguments": "[]", "destination_kind": "queue", "destination_name": "queue1", "source_kind": "exchange"}
+{"source_name": "", "routing_key": "queue1-bridge", "arguments": "[]", "destination_kind": "queue", "destination_name": "queue1-bridge", "source_kind": "exchange"}
+{"source_name": "", "routing_key": "queue2", "arguments": "[]", "destination_kind": "queue", "destination_name": "queue2", "source_kind": "exchange"}
+{"source_name": "", "routing_key": "queue2-bridge", "arguments": "[]", "destination_kind": "queue", "destination_name": "queue2-bridge", "source_kind": "exchange"}
+{"source_name": "exchange1", "routing_key": "key1", "arguments": "[]", "destination_kind": "queue", "destination_name": "queue1-bridge", "source_kind": "exchange"}
+{"source_name": "exchange1", "routing_key": "key1-origin", "arguments": "[]", "destination_kind": "queue", "destination_name": "queue1", "source_kind": "exchange"}
+{"source_name": "exchange2", "routing_key": "key2", "arguments": "[]", "destination_kind": "queue", "destination_name": "queue2-bridge", "source_kind": "exchange"}
+{"source_name": "exchange2", "routing_key": "key2-origin", "arguments": "[]", "destination_kind": "queue", "destination_name": "queue2", "source_kind": "exchange"}

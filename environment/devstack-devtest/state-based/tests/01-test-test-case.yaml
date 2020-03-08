@@ -2,7 +2,7 @@ test-case:
   - event: compute.create_flavor
     args:
       - name: name
-        value: flavor_test81
+        value: flavor_test
       - name: ram
         value: 512
       - name: vcpus
@@ -12,10 +12,23 @@ test-case:
     states:
       - name: flavor_created
     is_targeted: no
+  - event: compute.create_flavor
+    args:
+      - name: name
+        value: flavor_test_alt
+      - name: ram
+        value: 512
+      - name: vcpus
+        value: 2
+      - name: disk
+        value: 2
+    states:
+      - name: flavor_created
+    is_targeted: no
   - event: image.create_image
     args:
       - name: name
-        value: image_test23
+        value: image_test
       - name: filename
         value: ./images/cirros-0.4.0-x86_64-disk.img
     states:
@@ -24,7 +37,7 @@ test-case:
   - event: block_storage.create_volume
     args:
       - name: name
-        value: voltest2
+        value: volume_test
       - name: size
         value: 2
     states:
@@ -33,11 +46,11 @@ test-case:
   - event: compute.create_server
     args:
       - name: name
-        value: server_test2
+        value: server_test
       - name: flavor_id
-        value: flavor_test81
+        value: flavor_test
       - name: image_id
-        value: image_test23
+        value: image_test
       - name: networks
         value: auto
     states:
@@ -46,9 +59,106 @@ test-case:
   - event: compute.create_volume_attachment
     args:
       - name: server
-        value: server_test2
+        value: server_test
       - name: volume_id
-        value: voltest2
+        value: volume_test
     states:
       - name: volume_attached
+    is_targeted: no
+  - event: compute.shelve_server
+    args:
+      - name: server
+        value: server_test
+    states:
+      - name: server_shelved
+    is_targeted: no
+  - event: compute.unshelve_server
+    args:
+      - name: server
+        value: server_test
+    states:
+      - name: server_unshelved
+    is_targeted: no
+  - event: compute.pause_server
+    args:
+      - name: server
+        value: server_test
+    states:
+      - name: server_paused
+    is_targeted: no
+  - event: compute.unpause_server
+    args:
+      - name: server
+        value: server_test
+    states:
+      - name: server_unpaused
+    is_targeted: no
+  - event: compute.suspend_server
+    args:
+      - name: server
+        value: server_test
+    states:
+      - name: server_suspended
+    is_targeted: no
+  - event: compute.resume_server
+    args:
+      - name: server
+        value: server_test
+    states:
+      - name: server_resumed
+    is_targeted: no
+  - event: compute.resize_server
+    args:
+      - name: server
+        value: server_test
+      - name: flavor
+        value: flavor_test_alt
+    states:
+      - name: server_resized
+    is_targeted: no
+  - event: compute.confirm_server_resize
+    args:
+      - name: server
+        value: server_test
+    states:
+      - name: server_resize_confirmed
+    is_targeted: no
+  - event: compute.resize_server
+    args:
+      - name: server
+        value: server_test
+      - name: flavor
+        value: flavor_test
+    states:
+      - name: server_resized
+    is_targeted: no
+  - event: compute.revert_server_resize
+    args:
+      - name: server
+        value: server_test
+    states:
+      - name: server_resize_reverted
+    is_targeted: no
+  - event: compute.stop_server
+    args:
+      - name: server
+        value: server_test
+    states:
+      - name: server_stopped
+    is_targeted: no
+  - event: compute.start_server
+    args:
+      - name: server
+        value: server_test
+    states:
+      - name: server_started
+    is_targeted: no
+  - event: compute.delete_server
+    args:
+      - name: server
+        value: server_test
+      - name: force
+        value: yes
+    states:
+      - name: server_deleted
     is_targeted: no
