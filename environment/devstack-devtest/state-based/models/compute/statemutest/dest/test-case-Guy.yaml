@@ -1,0 +1,293 @@
+!testcase
+fictitiousName: Guy
+inputSet: 
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _eW2kIF5zEeqe_o-TJMu1jg
+         source: _c3GBkF5zEeqe_o-TJMu1jg
+         transition: _nOJU8F5zEeqe_o-TJMu1jg
+      index: 2335974006
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   - !expected
+      extras: 
+         destination: _p3G7QF5zEeqe_o-TJMu1jg
+         source: _o4_tMF5zEeqe_o-TJMu1jg
+         transition: _zQuWAF5zEeqe_o-TJMu1jg
+      index: 2335974007
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_BuildRun
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 2335974010
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_Unshelve
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _sLicAF5zEeqe_o-TJMu1jg
+         source: _p3G7QF5zEeqe_o-TJMu1jg
+         transition: _9FW40F5zEeqe_o-TJMu1jg
+      index: 2335974011
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_Pause
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 2335974014
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_BuildRun
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 2335974016
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_Shutoff
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 2335974018
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_BuildRun
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _p3G7QF5zEeqe_o-TJMu1jg
+         source: _sLicAF5zEeqe_o-TJMu1jg
+         transition: __FNQsF5zEeqe_o-TJMu1jg
+      index: 2335974019
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_Unpause
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 2335974022
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_Unpause
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 2335974024
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_ResizeConfirm
+- !input
+   args: 
+      e_flavor: '1'
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _v1EHcF5zEeqe_o-TJMu1jg
+         source: _p3G7QF5zEeqe_o-TJMu1jg
+         transition: _3nVw8F5zEeqe_o-TJMu1jg
+      index: 2335974025
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_Resize
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _p3G7QF5zEeqe_o-TJMu1jg
+         source: _v1EHcF5zEeqe_o-TJMu1jg
+         transition: _4lZUoF5zEeqe_o-TJMu1jg
+      index: 2335974027
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_ResizeConfirm
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _tnljQF5zEeqe_o-TJMu1jg
+         source: _p3G7QF5zEeqe_o-TJMu1jg
+         transition: _z3v5wF5zEeqe_o-TJMu1jg
+      index: 2335974029
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_Shelve
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _p3G7QF5zEeqe_o-TJMu1jg
+         source: _tnljQF5zEeqe_o-TJMu1jg
+         transition: _0l4yIF5zEeqe_o-TJMu1jg
+      index: 2335974031
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_Unshelve
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _uuncwF5zEeqe_o-TJMu1jg
+         source: _p3G7QF5zEeqe_o-TJMu1jg
+         transition: _1ksjwF5zEeqe_o-TJMu1jg
+      index: 2335974033
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_Shutoff
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _p3G7QF5zEeqe_o-TJMu1jg
+         source: _uuncwF5zEeqe_o-TJMu1jg
+         transition: _2cfucF5zEeqe_o-TJMu1jg
+      index: 2335974035
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_Start
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _q397UF5zEeqe_o-TJMu1jg
+         source: _p3G7QF5zEeqe_o-TJMu1jg
+         transition: _7q-lgF5zEeqe_o-TJMu1jg
+      index: 2335974037
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_Suspend
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 2335974040
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_Shutoff
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 2335974042
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_Suspend
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _p3G7QF5zEeqe_o-TJMu1jg
+         source: _q397UF5zEeqe_o-TJMu1jg
+         transition: _8WVPoF5zEeqe_o-TJMu1jg
+      index: 2335974043
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_Resume
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 2335974046
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_ResizeConfirm
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 2335974048
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_Resume
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _uuncwF5zEeqe_o-TJMu1jg
+         source: _p3G7QF5zEeqe_o-TJMu1jg
+         transition: _1ksjwF5zEeqe_o-TJMu1jg
+      index: 2335974049
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_Shutoff
+- !input
+   args: 
+      e_flavor: '1'
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _v1EHcF5zEeqe_o-TJMu1jg
+         source: _uuncwF5zEeqe_o-TJMu1jg
+         transition: _6PoB0F5zEeqe_o-TJMu1jg
+      index: 2335974051
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_Resize
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 2335974054
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_Unpause
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _uuncwF5zEeqe_o-TJMu1jg
+         source: _v1EHcF5zEeqe_o-TJMu1jg
+         transition: _6-TFsF5zEeqe_o-TJMu1jg
+      index: 2335974055
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_ResizeConfirm
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _iYgbsF5zEeqe_o-TJMu1jg
+         source: _eW2kIF5zEeqe_o-TJMu1jg
+         transition: _n3xgwF5zEeqe_o-TJMu1jg
+      index: 2335974057
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_Delete
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 2335974060
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_Shutoff
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 2335974062
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_Shutoff
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 2335974064
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_Pause
+metadata: 
+   objective_rate_2: '30.0'
+   objective_rate_1: '0.0'
+   iteration: '144329'

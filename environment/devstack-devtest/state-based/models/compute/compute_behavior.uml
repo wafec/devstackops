@@ -103,6 +103,9 @@
       <ownedAttribute xmi:type="uml:Property" xmi:id="_r8vmkF25EeqVMrvx9LpJbg" name="powerOn">
         <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
       </ownedAttribute>
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_XbDa8F8IEeqCU8dvVQh_Cg" name="flavor">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      </ownedAttribute>
       <ownedBehavior xmi:type="uml:StateMachine" xmi:id="_P4QoIF25EeqVMrvx9LpJbg" name="GwStateMachine">
         <region xmi:type="uml:Region" xmi:id="_aYYjcF5zEeqe_o-TJMu1jg" name="GwStateMachineRegion">
           <transition xmi:type="uml:Transition" xmi:id="_mw7NcF5zEeqe_o-TJMu1jg" source="_cX0EkF5zEeqe_o-TJMu1jg" target="_c3GBkF5zEeqe_o-TJMu1jg"/>
@@ -153,7 +156,13 @@
                 </effect>
                 <trigger xmi:type="uml:Trigger" xmi:id="_TSkFYF51Eeqe_o-TJMu1jg" event="_fJ2tcF26EeqVMrvx9LpJbg"/>
               </transition>
-              <transition xmi:type="uml:Transition" xmi:id="_3nVw8F5zEeqe_o-TJMu1jg" name="t_Resize_running" source="_p3G7QF5zEeqe_o-TJMu1jg" target="_v1EHcF5zEeqe_o-TJMu1jg">
+              <transition xmi:type="uml:Transition" xmi:id="_3nVw8F5zEeqe_o-TJMu1jg" name="t_Resize_running" guard="_0ZdD8F8IEeqCU8dvVQh_Cg" source="_p3G7QF5zEeqe_o-TJMu1jg" target="_v1EHcF5zEeqe_o-TJMu1jg">
+                <ownedRule xmi:type="uml:Constraint" xmi:id="_0ZdD8F8IEeqCU8dvVQh_Cg">
+                  <specification xmi:type="uml:OpaqueExpression" xmi:id="_0ZdD8V8IEeqCU8dvVQh_Cg">
+                    <language>JAVA</language>
+                    <body>flavor != event.e_flavor &amp;&amp; (event.e_flavor == 0 || event.e_flavor == 1)</body>
+                  </specification>
+                </ownedRule>
                 <trigger xmi:type="uml:Trigger" xmi:id="_a5ASUF51Eeqe_o-TJMu1jg" event="__pgPoF26EeqVMrvx9LpJbg"/>
               </transition>
               <transition xmi:type="uml:Transition" xmi:id="_4lZUoF5zEeqe_o-TJMu1jg" name="t_ResizeConfirm_running" guard="_hCDUMF51Eeqe_o-TJMu1jg" source="_v1EHcF5zEeqe_o-TJMu1jg" target="_p3G7QF5zEeqe_o-TJMu1jg">
@@ -165,7 +174,13 @@
                 </ownedRule>
                 <trigger xmi:type="uml:Trigger" xmi:id="_kraAgF51Eeqe_o-TJMu1jg" event="_ISdpgF27EeqVMrvx9LpJbg"/>
               </transition>
-              <transition xmi:type="uml:Transition" xmi:id="_6PoB0F5zEeqe_o-TJMu1jg" name="t_Resize_stopped" source="_uuncwF5zEeqe_o-TJMu1jg" target="_v1EHcF5zEeqe_o-TJMu1jg">
+              <transition xmi:type="uml:Transition" xmi:id="_6PoB0F5zEeqe_o-TJMu1jg" name="t_Resize_stopped" guard="_8wC7cF8IEeqCU8dvVQh_Cg" source="_uuncwF5zEeqe_o-TJMu1jg" target="_v1EHcF5zEeqe_o-TJMu1jg">
+                <ownedRule xmi:type="uml:Constraint" xmi:id="_8wC7cF8IEeqCU8dvVQh_Cg">
+                  <specification xmi:type="uml:OpaqueExpression" xmi:id="_8wC7cV8IEeqCU8dvVQh_Cg">
+                    <language>JAVA</language>
+                    <body>flavor != event.e_flavor &amp;&amp; (event.e_flavor == 1 || event.e_flavor == 0)</body>
+                  </specification>
+                </ownedRule>
                 <trigger xmi:type="uml:Trigger" xmi:id="_oMxOcF51Eeqe_o-TJMu1jg" event="__pgPoF26EeqVMrvx9LpJbg"/>
               </transition>
               <transition xmi:type="uml:Transition" xmi:id="_6-TFsF5zEeqe_o-TJMu1jg" name="t_ResizeConfirm_stopped" guard="_ubOUwF51Eeqe_o-TJMu1jg" source="_v1EHcF5zEeqe_o-TJMu1jg" target="_uuncwF5zEeqe_o-TJMu1jg">
@@ -208,7 +223,11 @@
     <packagedElement xmi:type="uml:Signal" xmi:id="_NwqNAF26EeqVMrvx9LpJbg" name="e_Start"/>
     <packagedElement xmi:type="uml:SignalEvent" xmi:id="_S2jv0F26EeqVMrvx9LpJbg" name="e_Shutoff_event" signal="_MRW9cF26EeqVMrvx9LpJbg"/>
     <packagedElement xmi:type="uml:SignalEvent" xmi:id="_fJ2tcF26EeqVMrvx9LpJbg" name="e_Start_event" signal="_NwqNAF26EeqVMrvx9LpJbg"/>
-    <packagedElement xmi:type="uml:Signal" xmi:id="_tBo8oF26EeqVMrvx9LpJbg" name="e_Resize"/>
+    <packagedElement xmi:type="uml:Signal" xmi:id="_tBo8oF26EeqVMrvx9LpJbg" name="e_Resize">
+      <ownedAttribute xmi:type="uml:Property" xmi:id="_iVST4F8IEeqCU8dvVQh_Cg" name="e_flavor">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      </ownedAttribute>
+    </packagedElement>
     <packagedElement xmi:type="uml:Signal" xmi:id="_uHaR4F26EeqVMrvx9LpJbg" name="e_ResizeConfirm"/>
     <packagedElement xmi:type="uml:SignalEvent" xmi:id="__pgPoF26EeqVMrvx9LpJbg" name="e_Resize_event" signal="_tBo8oF26EeqVMrvx9LpJbg"/>
     <packagedElement xmi:type="uml:SignalEvent" xmi:id="_ISdpgF27EeqVMrvx9LpJbg" name="e_ResizeConfirm_event" signal="_uHaR4F26EeqVMrvx9LpJbg"/>

@@ -707,6 +707,10 @@
           <element href="compute_behavior.uml#_r8vmkF25EeqVMrvx9LpJbg"/>
           <layoutConstraint xsi:type="notation:Location" xmi:id="_r81GIV25EeqVMrvx9LpJbg"/>
         </children>
+        <children xsi:type="notation:Shape" xmi:id="_XbpQ0F8IEeqCU8dvVQh_Cg" type="Property_ClassAttributeLabel">
+          <element href="compute_behavior.uml#_XbDa8F8IEeqCU8dvVQh_Cg"/>
+          <layoutConstraint xsi:type="notation:Location" xmi:id="_XbpQ0V8IEeqCU8dvVQh_Cg"/>
+        </children>
         <styles xsi:type="notation:TitleStyle" xmi:id="_HWOVoV25EeqVMrvx9LpJbg"/>
         <styles xsi:type="notation:SortingStyle" xmi:id="_HWOVol25EeqVMrvx9LpJbg"/>
         <styles xsi:type="notation:FilteringStyle" xmi:id="_HWOVo125EeqVMrvx9LpJbg"/>
@@ -775,6 +779,10 @@
         <layoutConstraint xsi:type="notation:Location" xmi:id="_tBrY5F26EeqVMrvx9LpJbg" y="15"/>
       </children>
       <children xsi:type="notation:BasicCompartment" xmi:id="_tBrY5V26EeqVMrvx9LpJbg" type="Signal_AttributeCompartment">
+        <children xsi:type="notation:Shape" xmi:id="_iVpgQF8IEeqCU8dvVQh_Cg" type="Property_SignalAttributeLabel">
+          <element href="compute_behavior.uml#_iVST4F8IEeqCU8dvVQh_Cg"/>
+          <layoutConstraint xsi:type="notation:Location" xmi:id="_iVpgQV8IEeqCU8dvVQh_Cg"/>
+        </children>
         <styles xsi:type="notation:TitleStyle" xmi:id="_tBrY5l26EeqVMrvx9LpJbg"/>
         <styles xsi:type="notation:SortingStyle" xmi:id="_tBrY5126EeqVMrvx9LpJbg"/>
         <styles xsi:type="notation:FilteringStyle" xmi:id="_tBrY6F26EeqVMrvx9LpJbg"/>
@@ -1210,7 +1218,7 @@
       </children>
       <children xsi:type="notation:DecorationNode" xmi:id="_3nyc5V5zEeqe_o-TJMu1jg" type="Transition_GuardLabel">
         <styles xsi:type="notation:BooleanValueStyle" xmi:id="_35KgwF5zEeqe_o-TJMu1jg" name="IS_UPDATED_POSITION" booleanValue="true"/>
-        <layoutConstraint xsi:type="notation:Location" xmi:id="_3nyc5l5zEeqe_o-TJMu1jg"/>
+        <layoutConstraint xsi:type="notation:Location" xmi:id="_3nyc5l5zEeqe_o-TJMu1jg" x="87" y="17"/>
       </children>
       <children xsi:type="notation:DecorationNode" xmi:id="_3nyc515zEeqe_o-TJMu1jg" type="Transition_StereotypeLabel">
         <styles xsi:type="notation:BooleanValueStyle" xmi:id="_35X8IF5zEeqe_o-TJMu1jg" name="IS_UPDATED_POSITION" booleanValue="true"/>
