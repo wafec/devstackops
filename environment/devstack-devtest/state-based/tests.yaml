@@ -22,3 +22,20 @@ tests:
       devices:
         - name: Devstack All-in-One 18
           snapshot: MyEnv Sending
+  production-test:
+    rabbitmq:
+      host: 192.168.56.11
+      user: stackrabbit
+      passwd: supersecret
+    message-api:
+      port: 5064
+    env-api:
+      port: 9000
+      address: 192.168.56.114
+      devices:
+        - name: Devstack Controller
+          snapshot: TestingEnv
+        - name: Devstack Compute1
+          snapshot: TestingEnv
+        - name: Devstack Compute2
+          snapshot: TestingEnv
