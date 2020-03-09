@@ -34,8 +34,8 @@ tests:
       address: 192.168.56.114
       devices:
         - name: Devstack Controller
-          snapshot: TestingEnv
+          snapshot: TestingDev
         - name: Devstack Compute1
-          snapshot: TestingEnv
+          snapshot: TestingDev
         - name: Devstack Compute2
-          snapshot: TestingEnv
+          snapshot: TestingDev
