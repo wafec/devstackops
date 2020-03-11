@@ -8,6 +8,7 @@ from pygments import highlight, lexers, formatters
 import time
 import threading
 import database
+import datetime
 
 
 class TestFunc:
@@ -90,15 +91,39 @@ class StateMonitorException(Exception):
     pass
 
 
+def _st_try_log_states(opts, prev_msg_list):
+    if 'test_handler' in opts:
+        test_handler = opts['test_handler']
+        if 'server_test' in test_handler.instances:
+            server_test = test_handler.instances['server_test']
+            test_id = test_handler.test_id
+            conn = opts['conn']
+            try:
+                result = conn.compute.get_server(server_test)
+                if result:
+                    msg = _tests_events_log_state(result, test_id, prev_msg_list[-1] if prev_msg_list else None)
+                    prev_msg_list.append(msg)
+            except openstack.exceptions.InvalidRequest:
+                pass
+            except openstack.exceptions.ResourceNotFound:
+                msg = 'server not found'
+                if not prev_msg_list or msg != prev_msg_list[-1]:
+                    database.logs_add('tests_events', msg, test_id)
+                    prev_msg_list.append(msg)
+
+
 def st_wait(times=20, interval=1):
     def st_wait_wrapper(function):
         def wrapped_function(*args, **kwargs):
             status_ok = False
             exc = None
             counter = 0
+            prev_msg_list = []
             opts = kwargs['opts']
             opts['conn'] = openstack.connect(cloud=opts['cloud'])
+            start_time = datetime.datetime.now()
             while not status_ok and counter < times:
+                _st_try_log_states(opts, prev_msg_list)
                 try:
                     function(*args, **kwargs)
                     status_ok = True
@@ -108,6 +133,16 @@ def st_wait(times=20, interval=1):
                     exc = state_exc
                     time.sleep(interval)
                 counter = counter + 1
+            if 'test_handler' in opts:
+                end_time = datetime.datetime.now()
+                secs = (end_time - start_time).total_seconds()
+                msg = 'test status: %s, time: %s, error: %s' % (
+                    'PASS' if status_ok else 'FAIL',
+                    '%s secs' % secs,
+                    repr(exc) if not status_ok else 'NO_ERROR'
+                )
+                database.logs_add('tests_events', msg, opts['test_handler'].test_id)
+                _st_try_log_states(opts, prev_msg_list)
             return status_ok, exc
         return wrapped_function
     return st_wait_wrapper
@@ -146,7 +181,14 @@ def _dump_invalid_server_status(result):
           result.status.lower(), result.task_state, str(result.power_state), result.vm_state)
 
 
-@st_wait(times=60)
+def _tests_events_log_state(result, test_id, last_msg=None):
+    msg = 'power=%s, vm=%s, task=%s, status=%s' % (result.power_state, result.vm_state, result.task_state, result.status)
+    if msg != last_msg:
+        database.logs_add('tests_events', msg, test_id)
+    return msg
+
+
+@st_wait(times=120)
 def st_server_created(opts):
     test_handler, conn = opts['test_handler'], opts['conn']
     try:
@@ -287,7 +329,7 @@ def st_server_resumed(opts):
         raise StateMonitorException('server resuming invalid request')
 
 
-@st_wait(times=120)
+@st_wait(times=180)
 def st_server_resized(opts):
     test_handler, conn = opts['test_handler'], opts['conn']
     try:
@@ -363,7 +405,7 @@ def st_server_started(opts):
 
 
 @st_wait(times=120)
-def set_server_deleted(opts):
+def st_server_deleted(opts):
     test_handler, conn = opts['test_handler'], opts['conn']
     try:
         result = conn.compute.get_server(test_handler.instances['server_test'])

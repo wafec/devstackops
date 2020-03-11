@@ -164,6 +164,7 @@ class TestSuiteExecution(threading.Thread):
                               self._test_handler.test_id)
             self._test_handler.current_test = test
             try:
+                database.logs_add('tests_events', 'run event %s' % test.event, self._test_handler.test_id)
                 self._test_handler.current_result = test.func()
             except Exception as func_exc:
                 self._test_handler.exceptions.append(func_exc)
@@ -227,13 +228,15 @@ class StateMonitor(threading.Thread):
 
 
 class OutputMonitorApi(Resource):
-    def __init__(self, test_handler):
+    def __init__(self, test_handler, lock):
         self._test_handler = test_handler
+        self._lock = lock if lock else multiprocessing.Lock()
 
     def post(self):
-        content = request.json
-        test_output = content['output']
-        database.output_add(self._test_handler.test_id, test_output)
+        with self._lock:
+            content = request.json
+            test_output = content['output']
+            database.output_add(self._test_handler.test_id, test_output)
 
 
 class MessageMonitorApi(Resource):
@@ -332,7 +335,7 @@ class MessageMonitor(threading.Thread):
         lock = multiprocessing.Lock()
         logs_lock = multiprocessing.Lock()
         api.add_resource(MessageMonitorApi, '/messages', resource_class_kwargs={ 'test_handler': self._test_handler, 'injection_enabled': self._injection_enabled, 'lock': lock })
-        api.add_resource(OutputMonitorApi, '/outputs', resource_class_kwargs={ 'test_handler': self._test_handler })
+        api.add_resource(OutputMonitorApi, '/outputs', resource_class_kwargs={ 'test_handler': self._test_handler,'lock': multiprocessing.Lock() })
         server = multiprocessing.Process(target=app.run, kwargs={ 'port': self._port, 'host': '0.0.0.0' })
         server.start()
         with self._test_handler.completion_cv:

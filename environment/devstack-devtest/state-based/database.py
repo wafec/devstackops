@@ -216,6 +216,7 @@ def injection_count_by_test_number(test_number):
 def output_add(test_id, output_content):
     con = sqlite3.connect(CONNECTION_STRING)
     with con:
+        con.isolation_level = None
         cur = con.cursor()
         cur.execute("SELECT IFNULL(MAX(OUT_ID), 0) + 1 FROM TEST_OUTPUT")
         row = cur.fetchone()
