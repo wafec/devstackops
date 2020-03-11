@@ -1,0 +1,24 @@
+!testcase
+fictitiousName: River
+inputSet: 
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 214008989
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_Unshelve
+- !input
+   args: 
+      e_flavor: '0'
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 214008991
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_Resize
+metadata: 
+   objective_rate_2: '3.0'
+   objective_rate_1: '2.147484647E9'
+   iteration: '1328'
