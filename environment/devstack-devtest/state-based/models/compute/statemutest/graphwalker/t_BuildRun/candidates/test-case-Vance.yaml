@@ -1,0 +1,37 @@
+!testcase
+fictitiousName: Vance
+inputSet: 
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _eW2kIF5zEeqe_o-TJMu1jg
+         source: _c3GBkF5zEeqe_o-TJMu1jg
+         transition: _nOJU8F5zEeqe_o-TJMu1jg
+      index: 264226819
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   - !expected
+      extras: 
+         destination: _p3G7QF5zEeqe_o-TJMu1jg
+         source: _o4_tMF5zEeqe_o-TJMu1jg
+         transition: _zQuWAF5zEeqe_o-TJMu1jg
+      index: 264226820
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_BuildRun
+- !input
+   args: 
+      e_flavor: '1'
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _v1EHcF5zEeqe_o-TJMu1jg
+         source: _p3G7QF5zEeqe_o-TJMu1jg
+         transition: _3nVw8F5zEeqe_o-TJMu1jg
+      index: 264226822
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_Resize
+metadata: 
+   objective_rate_2: '3.0'
+   objective_rate_1: '0.0'
+   iteration: '156'

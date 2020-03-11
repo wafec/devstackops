@@ -1,0 +1,23 @@
+!testcase
+fictitiousName: Dandre
+inputSet: 
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 284516450
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_Shutoff
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 284516452
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_Start
+metadata: 
+   objective_rate_2: '3.0'
+   objective_rate_1: '2.147484647E9'
+   iteration: '225'

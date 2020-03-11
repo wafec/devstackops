@@ -1,0 +1,74 @@
+!testcase
+fictitiousName: Nicola
+inputSet: 
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 214008994
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_Unshelve
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _eW2kIF5zEeqe_o-TJMu1jg
+         source: _c3GBkF5zEeqe_o-TJMu1jg
+         transition: _nOJU8F5zEeqe_o-TJMu1jg
+      index: 214008995
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   - !expected
+      extras: 
+         destination: _p3G7QF5zEeqe_o-TJMu1jg
+         source: _o4_tMF5zEeqe_o-TJMu1jg
+         transition: _zQuWAF5zEeqe_o-TJMu1jg
+      index: 214008996
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_BuildRun
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _sLicAF5zEeqe_o-TJMu1jg
+         source: _p3G7QF5zEeqe_o-TJMu1jg
+         transition: _9FW40F5zEeqe_o-TJMu1jg
+      index: 214008998
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_Pause
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 214009001
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_Unshelve
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _p3G7QF5zEeqe_o-TJMu1jg
+         source: _sLicAF5zEeqe_o-TJMu1jg
+         transition: __FNQsF5zEeqe_o-TJMu1jg
+      index: 214009002
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_Unpause
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _sLicAF5zEeqe_o-TJMu1jg
+         source: _p3G7QF5zEeqe_o-TJMu1jg
+         transition: _9FW40F5zEeqe_o-TJMu1jg
+      index: 214009004
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_Pause
+metadata: 
+   objective_rate_2: '7.0'
+   objective_rate_1: '0.0'
+   iteration: '6423'

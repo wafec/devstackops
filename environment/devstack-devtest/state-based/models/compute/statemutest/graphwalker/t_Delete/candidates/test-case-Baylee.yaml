@@ -1,0 +1,55 @@
+!testcase
+fictitiousName: Baylee
+inputSet: 
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _eW2kIF5zEeqe_o-TJMu1jg
+         source: _c3GBkF5zEeqe_o-TJMu1jg
+         transition: _nOJU8F5zEeqe_o-TJMu1jg
+      index: 294093780
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   - !expected
+      extras: 
+         destination: _p3G7QF5zEeqe_o-TJMu1jg
+         source: _o4_tMF5zEeqe_o-TJMu1jg
+         transition: _zQuWAF5zEeqe_o-TJMu1jg
+      index: 294093781
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_BuildRun
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 294093784
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_Unshelve
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _sLicAF5zEeqe_o-TJMu1jg
+         source: _p3G7QF5zEeqe_o-TJMu1jg
+         transition: _9FW40F5zEeqe_o-TJMu1jg
+      index: 294093785
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_Pause
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: 
+         destination: _iYgbsF5zEeqe_o-TJMu1jg
+         source: _eW2kIF5zEeqe_o-TJMu1jg
+         transition: _n3xgwF5zEeqe_o-TJMu1jg
+      index: 294093787
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.GoodTransitionResult
+   qualifiedName: graphwalker.e_Delete
+metadata: 
+   objective_rate_2: '5.0'
+   objective_rate_1: '0.0'
+   iteration: '2093'

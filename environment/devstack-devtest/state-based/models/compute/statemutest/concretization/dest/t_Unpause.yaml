@@ -1,0 +1,81 @@
+test-case:
+- args:
+  - name: name
+    value: flavor_test
+  - name: ram
+    value: 512
+  - name: vcpus
+    value: 1
+  - name: disk
+    value: 1
+  event: compute.create_flavor
+  is_targeted: false
+  states:
+  - name: flavor_created
+- args:
+  - name: name
+    value: image_test
+  - name: filename
+    value: ./images/cirros-0.4.0-x86_64-disk.img
+  event: compute.create_image
+  is_targeted: false
+  states:
+  - name: image_created
+- args:
+  - name: name
+    value: volume_test
+  - name: size
+    value: 2
+  event: block_storage.create_volume
+  is_targeted: false
+  states:
+  - name: volume_created
+- args:
+  - name: name
+    value: server_test_alt
+  - name: ram
+    value: 256
+  - name: vcpus
+    value: 1
+  - name: disk
+    value: 1
+  event: compute.create_flavor
+  is_targeted: false
+  states:
+  - name: flavor_created
+- args:
+  - name: name
+    value: server_test
+  - name: flavor_id
+    value: flavor_test
+  - name: image_id
+    value: image_test
+  - name: networks
+    value: auto
+  event: compute.create_server
+  is_targeted: false
+  states:
+  - name: server_created
+  - name: server_running
+- args:
+  - name: server
+    value: server_test
+  event: compute.pause_server
+  is_targeted: false
+  states:
+  - name: server_paused
+- args:
+  - name: server
+    value: server_test
+  event: compute.unpause_server
+  is_targeted: true
+  states:
+  - name: server_unpaused
+  - name: server_running
+- args:
+  - name: server
+    value: server_test
+  event: compute.pause_server
+  is_targeted: false
+  states:
+  - name: server_paused
