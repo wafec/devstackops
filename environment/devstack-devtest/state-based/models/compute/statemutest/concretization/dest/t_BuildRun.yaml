@@ -17,7 +17,7 @@ test-case:
     value: image_test
   - name: filename
     value: ./images/cirros-0.4.0-x86_64-disk.img
-  event: compute.create_image
+  event: image.create_image
   is_targeted: false
   states:
   - name: image_created
