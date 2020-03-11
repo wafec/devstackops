@@ -35,6 +35,7 @@ source validate.sh
 source common.sh
 source user.sh
 source clone.sh
+source sshaccess.sh
 
 if [ "$HOST" -gt "20" ]; then
     stack_compute
