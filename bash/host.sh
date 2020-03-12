@@ -7,14 +7,14 @@ touch /etc/hosts
 echo -e "127.0.0.1\tlocalhost" >> /etc/hosts
 
 for i in $(seq 1 9); do
-    echo -e "192.168.56.2$i\tcompute$i" >> /etc/hosts
+    echo -e "$NETWORK.2$i\tcompute$i" >> /etc/hosts
 done
 
 if [[ "$HOST" -gt "20" ]]; then
     index=$(echo "$HOST" | cut -c2-3)
     sed -i "/compute$index/d" /etc/hosts
     echo -e "127.0.0.1\tcompute$index" >> /etc/hosts
-    echo -e "192.168.56.$SERVICE_HOST\tcontroller" >> /etc/hosts
+    echo -e "$NETWORK.$SERVICE_HOST\tcontroller" >> /etc/hosts
 elif [[ "$HOST" -gt "10" ]]; then
     echo -e "127.0.0.1\tcontroller" >> /etc/hosts
 else
@@ -34,7 +34,7 @@ echo "      dhcp4: yes" >> $netplan_file
 echo "    enp0s8:" >> $netplan_file
 echo "      dhcp4: no" >> $netplan_file
 echo "      addresses:" >> $netplan_file
-echo "      - 192.168.56.$HOST/24" >> $netplan_file
+echo "      - $NETWORK.$HOST/24" >> $netplan_file
 
 netplan apply
 
