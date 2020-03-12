@@ -15,8 +15,10 @@ if [[ "$HOST" -gt "20" ]]; then
     sed -i "/compute$index/d" /etc/hosts
     echo -e "127.0.0.1\tcompute$index" >> /etc/hosts
     echo -e "$NETWORK.$SERVICE_HOST\tcontroller" >> /etc/hosts
+    hostnamectl set-hostname compute$index
 elif [[ "$HOST" -gt "10" ]]; then
     echo -e "127.0.0.1\tcontroller" >> /etc/hosts
+    hostnamectl set-hostname controller
 else
     echo "Invalid host"
 fi
