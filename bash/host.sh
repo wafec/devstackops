@@ -39,7 +39,14 @@ echo "      - 192.168.56.$HOST/24" >> $netplan_file
 netplan apply
 
 
-apt install openssh-server
-su -l $USER_NAME -c "rm -rf ~/.ssh/id_rsa*"
-su -l $USER_NAME -c "echo -ne '\n\n\n' | ssh-keygen -t rsa"
-su -l $USER_NAME -c 'eval $(ssh-agent -s) && sleep 2 && ssh-add ~/.ssh/id_rsa'
+apt install -y openssh-server
+su -l $USER_NAME -c "
+    rm -rf ~/.ssh
+    mkdir ~/.ssh
+    eval $(ssh-agent -s)
+    sleep 1
+    cp $(pwd)/key/id_rsa ~/.ssh/id_rsa
+    cp $(pwd)/key/id_rsa.pub ~/.ssh/id_rsa.pub
+    ssh-add ~/.ssh/id_rsa
+    cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+"
