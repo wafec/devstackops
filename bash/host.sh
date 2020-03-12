@@ -50,3 +50,11 @@ su -l $USER_NAME -c 'eval $(ssh-agent -s); ssh-add ~/.ssh/id_rsa'
 su -l $USER_NAME -c "cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys"
 su -l $USER_NAME -c "cp $(pwd)/key/config ~/.ssh/config"
 su -l $USER_NAME -c "chmod 400 ~/.ssh/config"
+
+rm -rf /root/.ssh
+mkdir /root/.ssh
+touch /root/.ssh/authorized_keys
+cp ./key/config /root/.ssh/config
+cat ./key/id_rsa.pub /root/.ssh/authorized_keys
+chmod 400 /root/.ssh/config
+chmod 400 /root/.ssh/authorized_keys
