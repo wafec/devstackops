@@ -58,8 +58,8 @@ su -l $USER_NAME -c "chmod 400 ~/.ssh/config"
 rm -rf /root/.ssh
 mkdir /root/.ssh
 cp ./key/config /root/.ssh/config
-cat ./key/id_rsa.pub /root/.ssh/authorized_keys
-cat ./key/id_ecdsa.pub /root/.ssh/known_hosts
+cat ./key/id_rsa.pub >> /root/.ssh/authorized_keys
+cat ./key/id_ecdsa.pub >> /root/.ssh/known_hosts
 chmod 444 /root/.ssh/config
 chmod 444 /root/.ssh/authorized_keys
 chmod 444 /root/.ssh/known_hosts
