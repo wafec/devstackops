@@ -47,6 +47,7 @@ su -l $USER_NAME -c "
     sleep 1
     cp $(pwd)/key/id_rsa ~/.ssh/id_rsa
     cp $(pwd)/key/id_rsa.pub ~/.ssh/id_rsa.pub
+    chmod 400 ~/.ssh/id_rsa
     ssh-add ~/.ssh/id_rsa
     cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
 "
