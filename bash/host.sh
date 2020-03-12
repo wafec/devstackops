@@ -40,16 +40,13 @@ netplan apply
 
 
 apt install -y openssh-server
-su -l $USER_NAME -c "
-    rm -rf ~/.ssh
-    mkdir ~/.ssh
-    eval $(ssh-agent -s)
-    sleep 1
-    cp $(pwd)/key/id_rsa ~/.ssh/id_rsa
-    cp $(pwd)/key/id_rsa.pub ~/.ssh/id_rsa.pub
-    chmod 400 ~/.ssh/id_rsa
-    ssh-add ~/.ssh/id_rsa
-    cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
-    cp $(pwd)/key/config ~/.ssh/config
-    chmod 400 ~/.ssh/config
-"
+echo "$USER_NAME"
+su -l $USER_NAME -c "rm -rf ~/.ssh"
+su -l $USER_NAME -c "mkdir ~/.ssh" 
+su -l $USER_NAME -c "cp $(pwd)/key/id_rsa ~/.ssh/id_rsa"
+su -l $USER_NAME -c "cp $(pwd)/key/id_rsa.pub ~/.ssh/id_rsa.pub"
+su -l $USER_NAME -c "chmod 400 ~/.ssh/id_rsa"
+su -l $USER_NAME -c 'eval $(ssh-agent -s); ssh-add ~/.ssh/id_rsa'
+su -l $USER_NAME -c "cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys"
+su -l $USER_NAME -c "cp $(pwd)/key/config ~/.ssh/config"
+su -l $USER_NAME -c "chmod 400 ~/.ssh/config"
