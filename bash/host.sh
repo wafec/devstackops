@@ -50,4 +50,6 @@ su -l $USER_NAME -c "
     chmod 400 ~/.ssh/id_rsa
     ssh-add ~/.ssh/id_rsa
     cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+    cp $(pwd)/key/config ~/.ssh/config
+    chmod 400 ~/.ssh/config
 "
