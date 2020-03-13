@@ -27,7 +27,7 @@
     "is_targeted": false
   },
   {
-    "event": "compute.create_image",
+    "event": "image.create_image",
     "args": [
       {
         "name": "name",

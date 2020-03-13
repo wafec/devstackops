@@ -2,6 +2,7 @@ from yaml import load, FullLoader, YAMLObject, Dumper
 import os
 import json
 import yaml
+import argparse
 
 
 class TestSummary(YAMLObject):
@@ -127,7 +128,17 @@ def coding_build_test_input(inp, doc, event_name, waits):
     return i
 
 
-def coding_tests_from_test_summary(file_path):
+def coding_is_targeted(inp, doc, trans_path):
+    if trans_path:
+        res = [e for e in inp.expectedSet if 'GoodTransition' in e.qualifiedName and doc.transitions[e.extras['transition']] == trans_path]
+        if res:
+            return True
+        else:
+            return False
+    return None
+
+
+def coding_tests_from_test_summary(file_path, trans_path=None):
     with open(file_path, 'r') as summary_file:
         doc = load(summary_file, Loader=FullLoader)
     if doc:
@@ -135,7 +146,7 @@ def coding_tests_from_test_summary(file_path):
         for test in doc.generatedTestCases:
             test_path = os.path.join(os.path.dirname(file_path), test)
             if os.path.exists(test_path):
-                t = {'test-case': [], 'test-name': test}
+                t = {'test-case': [], 'test-name': test.split('.')[0], 'obj_1': 0, 'obj_2': 0}
                 for pre_test in coding_insert_pre_test_sequence():
                     t['test-case'].append(pre_test)
                 with open(test_path, 'r') as test_file:
@@ -146,15 +157,42 @@ def coding_tests_from_test_summary(file_path):
                             event_name = coding_translate_input_name_to_event(inp)
                             waits = coding_translate_input_expectations_to_state_waits(inp, doc)
                             i = coding_build_test_input(inp, doc, event_name, waits)
+                            is_targeted = coding_is_targeted(inp, doc, trans_path)
+                            i['is_targeted'] = is_targeted if is_targeted is not None else i['is_targeted']
                             if i['event'] is not None:
                                 t['test-case'].append(i)
+                t['obj_1'] = test_object.metadata['objective_rate_1']
+                t['obj_2'] = test_object.metadata['objective_rate_2']
                 tests.append(t)
         coding_post_tests_processing(tests)
         return tests
 
 
 if __name__ == '__main__':
-    tests = coding_tests_from_test_summary('../dest/test-summary-Wellington.yaml')
-    for test in tests:
-        with open(test['test-name'], 'w') as test_file:
-            yaml.dump({'test-case': test['test-case']}, test_file)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('destination', type=str)
+    parser.add_argument('summaries', type=str, nargs='+')
+    parser.add_argument('--zero', action='store_true', default=False)
+    parser.add_argument('--level', type=int, default=1)
+
+    args = parser.parse_args()
+
+    for summary in args.summaries:
+        summary_dirname = os.path.dirname(summary)
+        if args.level > 1:
+            for i in range(args.level - 1):
+                summary_dirname = os.path.dirname(summary_dirname)
+        summary_dirname = os.path.basename(summary_dirname)
+        tests = coding_tests_from_test_summary(summary, summary_dirname)
+        if not tests:
+            continue
+        tests.sort(key=lambda e: e['obj_1'])
+        if args.zero:
+            tests = tests[0:1]
+        for test in tests:
+            file = os.path.join(args.destination, '%s%s.yaml' % (summary_dirname,
+                                                                 '' if args.zero else '-' + test['test-name']
+                                                                 ))
+            print('File %s, Obj_1: %s, Obj_2: %s' % (file, str(test['obj_1']), str(test['obj_2'])))
+            with open(file, 'w') as test_file:
+                yaml.dump({'test-case': test['test-case']}, test_file)

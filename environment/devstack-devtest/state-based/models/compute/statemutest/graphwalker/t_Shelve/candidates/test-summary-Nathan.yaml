@@ -1,0 +1,58 @@
+!testSummary
+fictitiousName: Nathan
+generatedTestCases: 
+- test-case-Anthony.yaml
+states: 
+   _GAIjEFjwEeqFwOVcfm0o_g: Paused
+   _iYgbsF5zEeqe_o-TJMu1jg: v_Deleted
+   _Tfd2AFjwEeqFwOVcfm0o_g: Resized
+   _w_eMsFjvEeqFwOVcfm0o_g: Running
+   _JgKUQFjwEeqFwOVcfm0o_g: Suspended
+   _LJLOkFjyEeqFwOVcfm0o_g: Shelved
+   _tnljQF5zEeqe_o-TJMu1jg: v_Shelved
+   _uuncwF5zEeqe_o-TJMu1jg: v_Stopped
+   _c3GBkF5zEeqe_o-TJMu1jg: v_Create
+   _q397UF5zEeqe_o-TJMu1jg: v_Suspended
+   _sLicAF5zEeqe_o-TJMu1jg: v_Paused
+   _v1EHcF5zEeqe_o-TJMu1jg: v_Resized
+   _p3G7QF5zEeqe_o-TJMu1jg: v_Running
+   _5iTaUFj4EeqFwOVcfm0o_g: Stopped
+   _2pyZQFjxEeqFwOVcfm0o_g: Deleted
+   _oY_NIFjxEeqFwOVcfm0o_g: Created
+   _uhfgoFjqEeqFwOVcfm0o_g: Create
+   _eW2kIF5zEeqe_o-TJMu1jg: v_Created
+statesIdentifier: name
+transitions: 
+   _b7gjUFjyEeqFwOVcfm0o_g: t_resizeconfirm
+   _jdyaQFj4EeqFwOVcfm0o_g: t_resizecancel
+   _AvhdsFjzEeqFwOVcfm0o_g: t_delete
+   _OfJAoFj5EeqFwOVcfm0o_g: t_restart
+   _SoanUFjyEeqFwOVcfm0o_g: ""
+   _8m5MsFj4EeqFwOVcfm0o_g: t_start
+   _1ksjwF5zEeqe_o-TJMu1jg: t_Shutoff
+   _6-TFsF5zEeqe_o-TJMu1jg: t_ResizeConfirm_stopped
+   _nOJU8F5zEeqe_o-TJMu1jg: t_BuildRun
+   _0l4yIF5zEeqe_o-TJMu1jg: t_Unshelve
+   _Rwx0sFjyEeqFwOVcfm0o_g: t_buildrun
+   __FNQsF5zEeqe_o-TJMu1jg: t_Unpause
+   _zQuWAF5zEeqe_o-TJMu1jg: ""
+   _2cfucF5zEeqe_o-TJMu1jg: t_Start
+   _n3xgwF5zEeqe_o-TJMu1jg: t_Delete
+   _8WVPoF5zEeqe_o-TJMu1jg: t_Resume
+   _e6OXMFjyEeqFwOVcfm0o_g: t_suspend
+   _mw7NcF5zEeqe_o-TJMu1jg: ""
+   _6pKjcFjyEeqFwOVcfm0o_g: t_unpause
+   _7q-lgF5zEeqe_o-TJMu1jg: t_Suspend
+   _kpkxkFjwEeqFwOVcfm0o_g: ""
+   _3nVw8F5zEeqe_o-TJMu1jg: t_Resize_running
+   _aSAO4FjyEeqFwOVcfm0o_g: t_resize
+   _uWkikFzmEeqy_8w3G5-ZMg: t_shutoff
+   _2kdxEFzmEeqy_8w3G5-ZMg: t_unshelve
+   _6PoB0F5zEeqe_o-TJMu1jg: t_Resize_stopped
+   _z3v5wF5zEeqe_o-TJMu1jg: t_Shelve
+   _4lZUoF5zEeqe_o-TJMu1jg: t_ResizeConfirm_running
+   _1Syt0FzmEeqy_8w3G5-ZMg: t_shelve
+   _9FW40F5zEeqe_o-TJMu1jg: t_Pause
+   _fs_38FjyEeqFwOVcfm0o_g: t_resume
+   _4kTIsFjyEeqFwOVcfm0o_g: t_pause
+transitionsIdentifier: name

@@ -1,0 +1,23 @@
+!testcase
+fictitiousName: Danika
+inputSet: 
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 261818994
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_Unpause
+- !input
+   args: {}
+   expectedSet: 
+   - !expected
+      extras: {}
+      index: 261818996
+      qualifiedName: statemutest.testcase.GenericGeoTestCaseGenerator.InnoportuneResult
+   qualifiedName: graphwalker.e_Suspend
+metadata: 
+   objective_rate_2: '3.0'
+   objective_rate_1: '2.147484647E9'
+   iteration: '104'

@@ -88,10 +88,13 @@ def wait_test_finish():
 
 def _do_env_setup():
     machines = ENV_CONFIG['tests'][PROFILE_CURRENT]['env-api']['devices']
+    time.sleep(1)
     for machine in machines:
         subprocess.run(['VBoxManage', 'controlvm', machine['name'], 'poweroff'])
+        time.sleep(1)
         subprocess.run(['VBoxManage', 'snapshot', machine['name'], 'restore', machine['snapshot']])
         subprocess.run(['VBoxManage', 'startvm', machine['name']])
+        time.sleep(5)
 
 
 def wait_init():

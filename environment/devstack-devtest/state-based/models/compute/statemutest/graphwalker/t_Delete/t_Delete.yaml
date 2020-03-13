@@ -1,0 +1,4 @@
+!setup
+generic:
+  coverageTransitionSet:
+  - t_Delete

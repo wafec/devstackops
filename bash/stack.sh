@@ -34,6 +34,7 @@ stack_controller() {
 source validate.sh
 source common.sh
 source user.sh
+source host.sh
 source clone.sh
 
 if [ "$HOST" -gt "20" ]; then

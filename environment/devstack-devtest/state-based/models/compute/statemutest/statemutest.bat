@@ -2,7 +2,7 @@
 
 
 if "%1"=="build" (
-    call :build %2 %3
+    call :build %2 %3 %4
     goto :end
 )
 if "%1"=="gen" (
