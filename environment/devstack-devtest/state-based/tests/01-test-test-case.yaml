@@ -39,7 +39,7 @@ test-case:
       - name: name
         value: volume_test
       - name: size
-        value: 2
+        value: 1
     states:
       - name: volume_created
     is_targeted: no
