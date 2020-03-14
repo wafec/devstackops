@@ -7,6 +7,7 @@ import argparse
 import subprocess
 import yaml
 import logging
+import multiprocessing
 
 
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
@@ -86,15 +87,28 @@ def wait_test_finish():
     print('env state = terminated')
 
 
+def _do_env_setup_worker(machine):
+    subprocess.run(['VBoxManage', 'startvm', machine['name']])
+    time.sleep(1)
+
 def _do_env_setup():
     machines = ENV_CONFIG['tests'][PROFILE_CURRENT]['env-api']['devices']
-    time.sleep(1)
+
     for machine in machines:
         subprocess.run(['VBoxManage', 'controlvm', machine['name'], 'poweroff'])
-        time.sleep(1)
+    time.sleep(1)
+    for machine in machines:
         subprocess.run(['VBoxManage', 'snapshot', machine['name'], 'restore', machine['snapshot']])
-        subprocess.run(['VBoxManage', 'startvm', machine['name']])
-        time.sleep(5)
+    time.sleep(1)
+
+    processes = []
+    for machine in machines:
+        p = multiprocessing.Process(target=_do_env_setup_worker, args=(machine,))
+        processes.append(p)
+        p.start()
+    for p in processes:
+        p.join()
+    print('VMs started')
 
 
 def wait_init():

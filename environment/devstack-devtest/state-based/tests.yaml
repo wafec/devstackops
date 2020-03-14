@@ -33,9 +33,7 @@ tests:
       port: 9000
       address: 192.168.56.114
       devices:
-        - name: Devstack Controller
-          snapshot: Management
-        - name: Devstack Compute1
-          snapshot: Test
-        - name: Devstack Compute2
-          snapshot: Test
+        - name: DevController
+          snapshot: Configured
+        - name: DevCompute
+          snapshot: Configured

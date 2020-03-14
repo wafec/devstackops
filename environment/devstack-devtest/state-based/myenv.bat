@@ -1,4 +1,4 @@
 @echo off
 
-python myenv.py client --profile=production-test
+python myenv.py client --profile=%1
 pause
