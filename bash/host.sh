@@ -62,6 +62,8 @@ mkdir /root/.ssh
 cp ./key/config /root/.ssh/config
 cat ./key/id_rsa.pub >> /root/.ssh/authorized_keys
 cat ./key/id_ecdsa.pub >> /root/.ssh/known_hosts
-chmod 444 /root/.ssh/config
-chmod 444 /root/.ssh/authorized_keys
-chmod 444 /root/.ssh/known_hosts
+chmod 400 /root/.ssh/config
+chmod 400 /root/.ssh/authorized_keys
+chmod 400 /root/.ssh/known_hosts
+cp ./key/id_rsa.pub /root/.ssh/id_rsa.pub
+cp ./key/id_ecdsa.pub /root/.ssh/id_ecdsa.pub
