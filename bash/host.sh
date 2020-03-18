@@ -39,31 +39,3 @@ echo "      addresses:" >> $netplan_file
 echo "      - $NETWORK.$HOST/24" >> $netplan_file
 
 netplan apply
-
-
-apt install -y openssh-server
-echo "$USER_NAME"
-su -l $USER_NAME -c "rm -rf ~/.ssh"
-su -l $USER_NAME -c "mkdir ~/.ssh" 
-su -l $USER_NAME -c "cp $(pwd)/key/id_rsa ~/.ssh/id_rsa"
-su -l $USER_NAME -c "cp $(pwd)/key/id_rsa.pub ~/.ssh/id_rsa.pub"
-su -l $USER_NAME -c "cp $(pwd)/key/id_ecdsa ~/.ssh/id_ecdsa"
-su -l $USER_NAME -c "cp $(pwd)/key/id_ecdsa.pub ~/.ssh/id_ecdsa.pub"
-su -l $USER_NAME -c "chmod 400 ~/.ssh/id_rsa"
-su -l $USER_NAME -c "chmod 400 ~/.ssh/id_ecdsa"
-su -l $USER_NAME -c 'eval $(ssh-agent -s); ssh-add ~/.ssh/id_rsa; ssh-add ~/.ssh/id_ecdsa'
-su -l $USER_NAME -c "cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys"
-su -l $USER_NAME -c "cat ~/.ssh/id_ecdsa.pub >> ~/.ssh/known_hosts"
-su -l $USER_NAME -c "cp $(pwd)/key/config ~/.ssh/config"
-su -l $USER_NAME -c "chmod 400 ~/.ssh/config"
-
-rm -rf /root/.ssh
-mkdir /root/.ssh
-cp ./key/config /root/.ssh/config
-cat ./key/id_rsa.pub >> /root/.ssh/authorized_keys
-cat ./key/id_ecdsa.pub >> /root/.ssh/known_hosts
-chmod 400 /root/.ssh/config
-chmod 400 /root/.ssh/authorized_keys
-chmod 400 /root/.ssh/known_hosts
-cp ./key/id_rsa.pub /root/.ssh/id_rsa.pub
-cp ./key/id_ecdsa.pub /root/.ssh/id_ecdsa.pub
