@@ -6,8 +6,8 @@ configure_ssh() {
     ping -c 1 $1 2>&1 > /dev/null
     if [ $? -eq 0 ]; then
         echo "Configuring $1 SSH"
-        ssh-keyscan -H $1 >> .ssh/known_hosts 2>&1 > /dev/null
-        echo -e "123" | ssh-copy-id -i .ssh/id_rsa.pub stack@$1
+        ssh-keyscan -H $1 | sudo tee -a .ssh/known_hosts
+        sshpass -p123 ssh-copy-id -i .ssh/id_rsa.pub stack@$1
         scp $2/live_remote.sh stack@$1:~/live_remote.sh
         scp $2/live_remote_root.sh stack@$1:~/live_remote_root.sh
         ssh stack@$1 "chmod +x live_remote.sh; chmod +x live_remote_root.sh;"
@@ -27,7 +27,8 @@ cd /root
 echo "Current dir: $(pwd)"
 
 if [ ! -f .ssh/id_rsa ]; then
-    echo -e "\n\n\n" | ssh-keygen -t rsa 2>&1 > /dev/null
+    mkdir .ssh
+    ssh-keygen -t rsa -f .ssh/id_rsa -q -N ""
     eval $(ssh-agent -s)
     ssh-add .ssh/id_rsa
 fi
