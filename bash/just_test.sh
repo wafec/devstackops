@@ -1,6 +1,9 @@
 #!/bin/bash
 
 
-MYVAR=$(ssh-keyscan -H compute1)
-echo "---"
-echo $MYVAR
+pwd
+whoami
+cd ~stack
+pwd
+touch test.txt
+sudo chown root:stack test.txt
