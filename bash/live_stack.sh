@@ -8,6 +8,8 @@ SOURCE=$(pwd)
 cd ~stack
 DIR=$(pwd)
 eval $(ssh-agent -s)
+mkdir .ssh
+sudo chown stack:stack .ssh -R
 if [ ! -f $DIR/.ssh/id_rsa ]; then
     ssh-keygen -t rsa -N "" -q -f $DIR/.ssh/id_rsa
     ssh-add $DIR/.ssh/id_rsa
