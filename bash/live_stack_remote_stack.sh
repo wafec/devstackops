@@ -22,6 +22,7 @@ if grep -q "$ECSDA" ".ssh/known_hosts"; then
 else
     echo "Adding ECDSA to known hosts"
     echo $ECDSA | tee -a .ssh/known_hosts
+    ssh-keyscan -H $(getent hosts $DESTINATION | awk '{print $1}') | tee -a .ssh/known_hosts
 fi
 
 sudo chmod +r .ssh/known_hosts

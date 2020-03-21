@@ -7,6 +7,7 @@ configure_ssh() {
     if [ $? -eq 0 ]; then
         echo "Configuring $1 SSH"
         ssh-keyscan -H $1 | sudo tee -a .ssh/known_hosts
+        ssh-keyscan -H $(getent hosts $1 | awk '{print $1}') | sudo tee -a .ssh/known_hosts
         chmod +r .ssh/known_hosts
         sshpass -p123 ssh-copy-id -i .ssh/id_rsa.pub stack@$1
         scp $2/live_remote.sh stack@$1:~/live_remote.sh

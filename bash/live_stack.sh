@@ -31,6 +31,8 @@ configure_ssh() {
         else
             echo "Adding ECDSA to known hosts"
             echo $ECDSA | tee -a $DIR/.ssh/known_hosts
+            DEST_HOST=$1
+            ssh-keyscan -H $(getent hosts $DEST_HOST | awk '{print $1}') | tee -a $DIR/known_hosts
         fi
 
         echo "Copying SSH id to $1"
