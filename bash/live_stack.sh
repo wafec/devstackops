@@ -11,6 +11,7 @@ eval $(ssh-agent -s)
 if [ ! -f $DIR/.ssh/id_rsa ]; then
     ssh-keygen -t rsa -N "" -q -f $DIR/.ssh/id_rsa
     ssh-add $DIR/.ssh/id_rsa
+    sudo chmod +r $DIR/.ssh/id_rsa*
 fi
 
 configure_ssh() {
@@ -22,7 +23,9 @@ configure_ssh() {
         if [ ! -f .ssh/known_hosts ]; then
             echo "" | tee -a .ssh/known_hosts
         fi
-        
+
+        sudo chmod +r .ssh/known_hosts
+
         if grep -q "$ECDSA" "$DIR/.ssh/known_hosts"; then
             echo "ECDSA was found in known hosts"
         else

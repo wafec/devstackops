@@ -11,6 +11,7 @@ if [ ! -f .ssh/id_rsa ]; then
     echo "Generating RSA file"
     ssh-keygen -t -N "" -q -f .ssh/id_rsa
     ssh-add .ssh/id_rsa
+    sudo chmod +r .ssh/id_rsa*
 fi
 
 echo "Scanning $DESTINATION"
@@ -22,6 +23,8 @@ else
     echo "Adding ECDSA to known hosts"
     echo $ECDSA | tee -a .ssh/known_hosts
 fi
+
+sudo chmod +r .ssh/known_hosts
 
 echo "Copying SSH id to $DESTINATION"
 sshpass -p123 sudo ssh-copy-id -i .ssh/id_rsa stack@$DESTINATION
