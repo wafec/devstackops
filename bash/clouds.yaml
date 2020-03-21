@@ -1,0 +1,20 @@
+clouds:
+  devstack:
+    auth:
+      auth_url: http://192.168.56.81/identity
+      project_name: admin
+      username: admin
+      password: supersecret
+      user_domain_name: Default
+      project_domain_name: Default
+    region_name: RegionOne
+  devstack3:
+    auth:
+      auth_url: http://192.168.56.11/identity
+      project_name: admin
+      username: admin
+      password: labstack
+      user_domain_name: Default
+      project_domain_name: Default
+    region_name: RegionOne
+    identity_api_version: 3
