@@ -9,7 +9,7 @@ echo "Working in $(pwd)"
 eval $(ssh-agent -s)
 if [ ! -f .ssh/id_rsa ]; then
     echo "Generating RSA file"
-    ssh-keygen -t -N "" -q -f .ssh/id_rsa
+    ssh-keygen -t rsa -N "" -q -f .ssh/id_rsa
     ssh-add .ssh/id_rsa
     sudo chmod +r .ssh/id_rsa*
 fi
