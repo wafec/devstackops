@@ -19,13 +19,15 @@ configure_ssh() {
         echo "Scanning $1"
         ECDSA=$(ssh-keyscan -H $1)
 
-        if [ -f $DIR/.ssh/known_hosts ]; then
-            if grep -q "$ECDSA" "$DIR/.ssh/known_hosts"; then
-                echo "ECDSA was found in known hosts"
-            else
-                echo "Adding ECDSA to known hosts"
-                echo $ECDSA | tee -a $DIR/.ssh/known_hosts
-            fi
+        if [ ! -f .ssh/known_hosts ]; then
+            echo "" | tee -a .ssh/known_hosts
+        fi
+        
+        if grep -q "$ECDSA" "$DIR/.ssh/known_hosts"; then
+            echo "ECDSA was found in known hosts"
+        else
+            echo "Adding ECDSA to known hosts"
+            echo $ECDSA | tee -a $DIR/.ssh/known_hosts
         fi
 
         echo "Copying SSH id to $1"
