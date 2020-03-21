@@ -51,4 +51,3 @@ DEVSTACK=$(get_devstack)
 su -l $USER_NAME -c "$DEVSTACK/stack.sh"
 
 source live.sh
-source live_stack.sh
