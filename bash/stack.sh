@@ -38,6 +38,13 @@ source host.sh
 source clone.sh
 
 if [ "$HOST" -gt "20" ]; then
+    echo "Wait controller to start"
+    CONTROL_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://controller/dashboard)
+    while [ ! $CONTROL_STATUS -eq 200 ]
+    do
+        sleep 1
+        CONTROL_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://controller/dashboard)
+    done
     stack_compute
 elif [[ "$HOST" -gt "10" ]] && [[ "$HOST" -lt "20" ]]; then
     stack_controller
