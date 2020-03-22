@@ -38,6 +38,7 @@ source host.sh
 source clone.sh
 
 if [ "$HOST" -gt "20" ]; then
+    sudo apt install -y curl
     echo "Wait controller to start"
     CONTROL_STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://controller/dashboard)
     while [ ! $CONTROL_STATUS -eq 200 ]
