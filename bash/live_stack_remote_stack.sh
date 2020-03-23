@@ -10,6 +10,7 @@ eval $(ssh-agent -s)
 if [ ! -f .ssh/id_rsa ]; then
     echo "Generating RSA file"
     ssh-keygen -t rsa -N "" -q -f .ssh/id_rsa
+    sudo chown stack:stack .ssh/id_rsa*
     ssh-add .ssh/id_rsa
     sudo chown stack:stack .ssh -R
 fi
