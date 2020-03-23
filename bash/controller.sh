@@ -18,6 +18,8 @@ su -l $USER_NAME -c "echo \"DATABASE_PASSWORD=$SUPER_PASSWORD\" >> $CONF_FILE"
 su -l $USER_NAME -c "echo \"RABBIT_PASSWORD=$SUPER_PASSWORD\" >> $CONF_FILE"
 su -l $USER_NAME -c "echo \"SERVICE_PASSWORD=$SUPER_PASSWORD\" >> $CONF_FILE"
 su -l $USER_NAME -c "echo \"DEST=$DEST\" >> $CONF_FILE"
+su -l $USER_NAME -c "echo \"USE_PYTHON3=True\" >> $CONF_FILE"
+su -l $USER_NAME -c "echo \"USE_VENV=True\""
 
 DEVSTACK=$(get_devstack)
 
