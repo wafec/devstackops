@@ -29,5 +29,5 @@ su -l $USER_NAME -c "echo \"NOVNCPROXY_URL=\\\"http://\\\$SERVICE_HOST:6080/vnc_
 su -l $USER_NAME -c "echo \"VNCSERVER_LISTEN=\\\$HOST_IP\" >> $CONF_FILE"
 su -l $USER_NAME -c "echo \"VNCSERVER_PROXYCLIENT_ADDRESS=\\\$VNCSERVER_LISTEN\" >> $CONF_FILE"
 su -l $USER_NAME -c "echo \"USE_PYTHON3=True\" >> $CONF_FILE"
-su -l $USER_NAME -c "echo \"USE_VENV=True\" >> $CONF_FILE"
 su -l $USER_NAME -c "echo \"DEST=$DEST\" >> $CONF_FILE"
+su -l $USER_NAME -c "echo \"PIP_UPGRADE=True\" >> $CONF_FILE"
