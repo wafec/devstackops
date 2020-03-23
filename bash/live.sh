@@ -17,3 +17,6 @@ copy_key_files() {
 
 copy_key_files /root root root
 copy_key_files /opt/stack stack stack
+
+su -c$(pwd)/live_stack.sh stack
+su -c$(pwd)/live_root.sh root
