@@ -37,3 +37,20 @@ tests:
           snapshot: Configured
         - name: DevCompute
           snapshot: Configured
+  devstack-test:
+    rabbitmq:
+      host: 192.168.56.11
+      user: stackrabbit
+      passwd: supersecret
+    message-api:
+      port: 5064
+    env-api:
+      port: 9000
+      address: 192.168.56.114
+      devices:
+        - name: devstack_controller_test
+          snapshot: controller_test
+        - name: devstack_compute_test
+          snapshot: compute_test
+        - name: devstack_compute_alt_test
+          snapshot: compute_alt_test
