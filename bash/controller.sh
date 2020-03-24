@@ -19,6 +19,7 @@ su -l $USER_NAME -c "echo \"RABBIT_PASSWORD=$SUPER_PASSWORD\" >> $CONF_FILE"
 su -l $USER_NAME -c "echo \"SERVICE_PASSWORD=$SUPER_PASSWORD\" >> $CONF_FILE"
 su -l $USER_NAME -c "echo \"DEST=$DEST\" >> $CONF_FILE"
 su -l $USER_NAME -c "echo \"USE_PYTHON3=True\" >> $CONF_FILE"
+su -l $USER_NAME -c "echo \"PYTHON3_VERSION=3.4\" >> $CONF_FILE"
 su -l $USER_NAME -c "echo \"PIP_UPGRADE=True\" >> $CONF_FILE"
 
 DEVSTACK=$(get_devstack)
