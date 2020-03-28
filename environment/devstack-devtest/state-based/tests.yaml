@@ -52,5 +52,5 @@ tests:
           snapshot: controller_test
         - name: devstack_compute_test
           snapshot: compute_test
-        - name: devstack_compute_alt_test
+        - name: devstack_compute_alt
           snapshot: compute_alt_test

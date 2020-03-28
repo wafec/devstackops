@@ -13,10 +13,10 @@ def tests_test(test_number, experiment_id):
     myenv.wait_env(test_id)
     test_handler = state_based.TestHandler(tests, test_id, test_number)
     test_handler.targets = targets
-    myopenstack.build_tests(test_handler, tests, 'devstack3', False)
+    myopenstack.build_tests(test_handler, tests, 'devstack-test', False)
     state_based.test_tests(tests,
-                           profile='production-test',
-                           state_monitor_function=myopenstack.StateMonitorFunction(test_handler, 'devstack3').func,
+                           profile='devstack-test',
+                           state_monitor_function=myopenstack.StateMonitorFunction(test_handler, 'devstack-test').func,
                            test_handler=test_handler, ignore_falsification=False)
     myenv.wait_test_finish()
     if len(test_handler.exceptions) > 0:
