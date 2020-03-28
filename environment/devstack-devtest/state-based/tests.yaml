@@ -49,8 +49,28 @@ tests:
       address: 192.168.56.114
       devices:
         - name: devstack_controller_test
-          snapshot: controller_test
+          snapshot: controller_test_a
+          priority: 3
         - name: devstack_compute_test
           snapshot: compute_test
+          priority: 2
         - name: devstack_compute_alt
           snapshot: compute_alt_test
+          priority: 2
+  openstack:
+    rabbitmq:
+      host: 192.168.56.11
+      user: openstack
+      passwd: supersecret
+    message-api:
+      port: 5064
+    env-api:
+      port: 9000
+      address: 192.168.56.114
+      devices:
+      - name: openstack_controller
+        snapshot: test
+      - name: openstack_compute
+        snapshot: test
+      - name: openstack_compute_alt
+        snapshot: test
