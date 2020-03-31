@@ -88,39 +88,49 @@ def wait_test_finish():
 
 
 def _do_env_setup_worker(machine):
-    subprocess.run(['VBoxManage', 'startvm', machine['name']])
+    subprocess.run(['VBoxManage', 'startvm', machine['name'], '--type', 'headless'])
     time.sleep(1)
 
 
-def _do_env_setup():
+def _do_env_setup(flag=0x7):
     machines = ENV_CONFIG['tests'][PROFILE_CURRENT]['env-api']['devices']
 
-    for machine in machines:
-        subprocess.run(['VBoxManage', 'controlvm', machine['name'], 'poweroff'])
-    time.sleep(1)
-    for machine in machines:
-        subprocess.run(['VBoxManage', 'snapshot', machine['name'], 'restore', machine['snapshot']])
-    time.sleep(1)
-
-    for x in range(20):
-        processes = []
+    if flag & 0x1 != 0:
         for machine in machines:
-            prio = 1
-            if 'priority' in machine:
-                prio = int(machine['priority'])
-            if prio == x:
-                p = multiprocessing.Process(target=_do_env_setup_worker, args=(machine,))
-                processes.append(p)
-                p.start()
-        for p in processes:
-            p.join()
-    print('VMs started')
+            subprocess.run(['VBoxManage', 'controlvm', machine['name'], 'poweroff'])
+        time.sleep(1)
+        print('VMs stopped')
+    if flag & 0x2 != 0:
+        for machine in machines:
+            subprocess.run(['VBoxManage', 'snapshot', machine['name'], 'restore', machine['snapshot']])
+        time.sleep(1)
+        print('VMs restored')
+
+    if flag & 0x4 != 0:
+        for x in range(20):
+            processes = []
+            for machine in machines:
+                prio = 1
+                if 'priority' in machine:
+                    prio = int(machine['priority'])
+                if prio == x:
+                    p = multiprocessing.Process(target=_do_env_setup_worker, args=(machine,))
+                    processes.append(p)
+                    p.start()
+            for p in processes:
+                p.join()
+            time.sleep(1)
+        print('VMs started')
 
 
 def wait_init():
     while True:
         print('env waiting init')
-        _wait_for_state('init', url())
+        state = _wait_for_state(['init', 'terminated'], url())
+        if state == 'terminated':
+            _do_env_setup(0x1)
+            requests.put(url() + '?state=done')
+            continue
         print('env init found')
         _do_env_setup()
         requests.put(url() + '?state=env_up')

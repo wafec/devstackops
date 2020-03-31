@@ -68,9 +68,15 @@ tests:
       port: 9000
       address: 192.168.56.114
       devices:
-      - name: openstack_controller
-        snapshot: test
-      - name: openstack_compute
-        snapshot: test
-      - name: openstack_compute_alt
-        snapshot: test
+      - name: openstack_controller_2
+        snapshot: block
+        priority: 1
+      - name: openstack_compute1_2
+        snapshot: block
+        priority: 15
+      - name: openstack_compute2_2
+        snapshot: block
+        priority: 15
+      - name: openstack_block1_2
+        snapshot: block
+        priority: 15
