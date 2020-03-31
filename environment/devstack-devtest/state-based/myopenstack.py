@@ -91,6 +91,14 @@ class StateMonitorException(Exception):
     pass
 
 
+class ErrorStatusException(Exception):
+    pass
+
+
+class ServerErrorStatusException(ErrorStatusException):
+    pass
+
+
 def _st_try_log_states(opts, prev_msg_list):
     if 'test_handler' in opts:
         test_handler = opts['test_handler']
@@ -104,6 +112,8 @@ def _st_try_log_states(opts, prev_msg_list):
                     msg = _tests_events_log_state(result, test_id, prev_msg_list[-1] if prev_msg_list else None)
                     prev_msg_list.append(msg)
             except openstack.exceptions.InvalidRequest:
+                pass
+            except openstack.exceptions.HttpException:
                 pass
             except openstack.exceptions.ResourceNotFound:
                 msg = 'server not found'
@@ -122,17 +132,22 @@ def st_wait(times=20, interval=1):
             opts = kwargs['opts']
             opts['conn'] = openstack.connect(cloud=opts['cloud'])
             start_time = datetime.datetime.now()
-            while not status_ok and counter < times:
-                _st_try_log_states(opts, prev_msg_list)
-                try:
-                    function(*args, **kwargs)
-                    status_ok = True
-                    exc = None
-                except StateMonitorException as state_exc:
-                    status_ok = False
-                    exc = state_exc
-                    time.sleep(interval)
-                counter = counter + 1
+            try:
+                while not status_ok and counter < times:
+                    _st_try_log_states(opts, prev_msg_list)
+                    try:
+                        function(*args, **kwargs)
+                        status_ok = True
+                        exc = None
+                    except StateMonitorException as state_exc:
+                        status_ok = False
+                        exc = state_exc
+                        time.sleep(interval)
+                    counter = counter + 1
+            except ErrorStatusException as exc:
+                status_ok = False
+                exc = exc
+                time.sleep(interval)
             if 'test_handler' in opts:
                 end_time = datetime.datetime.now()
                 secs = (end_time - start_time).total_seconds()
@@ -195,6 +210,8 @@ def st_server_created(opts):
         result = conn.compute.get_server(test_handler.current_result)
         if not result:
             raise StateMonitorException('server result None')
+        if result.status and result.status.lower() == 'error':
+            raise ServerErrorStatusException()
         if result.status and result.status.lower() == 'active':
             print('server state %s' % result.status.lower())
             database.logs_add('st_server', 'correct server state %s' % result.status.lower(), test_handler.test_id)
@@ -239,11 +256,13 @@ def st_volume_attached(opts):
         raise StateMonitorException('volume invalid request')
 
 
-@st_wait(times=120)
+@st_wait(times=360)
 def st_server_shelved(opts):
     test_handler, conn = opts['test_handler'], opts['conn']
     try:
         result = conn.compute.get_server(test_handler.instances['server_test'])
+        if result and result.status and result.status.lower() == 'error':
+            raise ServerErrorStatusException()
         if result.status.lower() == 'shelved_offloaded':
             print('server shelved %s' % result.id)
         else:
@@ -259,6 +278,8 @@ def st_server_unshelved(opts):
     test_handler, conn = opts['test_handler'], opts['conn']
     try:
         result = conn.compute.get_server(test_handler.instances['server_test'])
+        if result and result.status and result.status.lower() == 'error':
+            raise ServerErrorStatusException()
         if result.status.lower() == 'active':
             print('server active %s' % result.id)
         else:
@@ -274,6 +295,8 @@ def st_server_paused(opts):
     test_handler, conn = opts['test_handler'], opts['conn']
     try:
         result = conn.compute.get_server(test_handler.instances['server_test'])
+        if result and result.status and result.status.lower() == 'error':
+            raise ServerErrorStatusException()
         if result.status.lower() == 'paused':
             print('server paused %s' % result.id)
         else:
@@ -289,6 +312,8 @@ def st_server_unpaused(opts):
     test_handler, conn = opts['test_handler'], opts['conn']
     try:
         result = conn.compute.get_server(test_handler.instances['server_test'])
+        if result and result.status and result.status.lower() == 'error':
+            raise ServerErrorStatusException()
         if result.status.lower() == 'active':
             print('server unpaused %s' % result.id)
         else:
@@ -304,6 +329,8 @@ def st_server_suspended(opts):
     test_handler, conn = opts['test_handler'], opts['conn']
     try:
         result = conn.compute.get_server(test_handler.instances['server_test'])
+        if result and result.status and result.status.lower() == 'error':
+            raise ServerErrorStatusException()
         if result.status.lower() == 'suspended':
             print('server suspended %s' % result.id)
         else:
@@ -319,6 +346,8 @@ def st_server_resumed(opts):
     test_handler, conn = opts['test_handler'], opts['conn']
     try:
         result = conn.compute.get_server(test_handler.instances['server_test'])
+        if result and result.status and result.status.lower() == 'error':
+            raise ServerErrorStatusException()
         if result.status.lower() == 'active':
             print('server resumed %s' % result.id)
         else:
@@ -334,6 +363,8 @@ def st_server_resized(opts):
     test_handler, conn = opts['test_handler'], opts['conn']
     try:
         result = conn.compute.get_server(test_handler.instances['server_test'])
+        if result and result.status and result.status.lower() == 'error':
+            raise ServerErrorStatusException()
         if result.status.lower() == 'verify_resize':
             print('server resized %s' % result.id)
         else:
@@ -349,6 +380,8 @@ def st_server_resize_confirmed(opts):
     test_handler, conn = opts['test_handler'], opts['conn']
     try:
         result = conn.compute.get_server(test_handler.instances['server_test'])
+        if result and result.status and result.status.lower() == 'error':
+            raise ServerErrorStatusException()
         if result.status.lower() == 'active':
             print('server resize confirmed %s' % result.id)
         else:
@@ -364,6 +397,8 @@ def st_server_resize_reverted(opts):
     test_handler, conn = opts['test_handler'], opts['conn']
     try:
         result = conn.compute.get_server(test_handler.instances['server_test'])
+        if result and result.status and result.status.lower () == 'error':
+            raise ServerErrorStatusException()
         if result.status.lower() == 'active':
             print('server resize reverted %s' % result.id)
         else:
@@ -379,6 +414,8 @@ def st_server_stopped(opts):
     test_handler, conn = opts['test_handler'], opts['conn']
     try:
         result = conn.compute.get_server(test_handler.instances['server_test'])
+        if result and result.status and result.status.lower() == 'error':
+            raise ServerErrorStatusException()
         if result.status.lower() == 'shutoff':
             print('server stopped %s' % result.id)
         else:
@@ -394,6 +431,8 @@ def st_server_started(opts):
     test_handler, conn = opts['test_handler'], opts['conn']
     try:
         result = conn.compute.get_server(test_handler.instances['server_test'])
+        if result and result.status and result.status.lower() == 'error':
+            raise ServerErrorStatusException()
         if result.status.lower() == 'active':
             print('server started %s' % result.id)
         else:

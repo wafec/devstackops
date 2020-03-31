@@ -18,3 +18,23 @@ clouds:
       project_domain_name: Default
     region_name: RegionOne
     identity_api_version: 3
+  devstack-test:
+    auth:
+      auth_url: http://192.168.56.11/identity
+      project_name: admin
+      username: admin
+      password: aintasecret
+      user_domain_name: Default
+      project_domain_name: Default
+    region_name: RegionOne
+    identity_api_version: 3
+  openstack:
+    auth:
+      auth_url: http://192.168.56.11:5000
+      project_name: admin
+      username: admin
+      password: supersecret
+      user_domain_name: Default
+      project_domain_name: Default
+    region_name: RegionOne
+    identity_api_version: 3

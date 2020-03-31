@@ -47,8 +47,11 @@ class EnvService(Resource):
 
     def get(self):
         test_id = database.control_ret_last_test_id()
-        state = database.control_ret_state(test_id)
-        return jsonify({'state': state})
+        if test_id > 0:
+            state = database.control_ret_state(test_id)
+            return jsonify({'state': state})
+        else:
+            return jsonify({'state': 'nop'})
 
     def post(self):
         content = request.json

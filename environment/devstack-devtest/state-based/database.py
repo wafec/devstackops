@@ -274,8 +274,10 @@ def control_ret_last_test_id():
     con = sqlite3.connect(CONNECTION_STRING)
     with con:
         cur = con.cursor()
-        cur.execute('SELECT IFNULL(TEST_ID, -1) FROM CONTROL ORDER BY CONTROL_DATE DESC')
+        cur.execute('SELECT TEST_ID FROM CONTROL ORDER BY CONTROL_DATE DESC')
         row = cur.fetchone()
+        if row is None or len(row) == 0:
+            return -1
         return row[0]
 
 
