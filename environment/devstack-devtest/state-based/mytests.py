@@ -2,9 +2,11 @@ import state_based
 import myopenstack
 import database
 import myenv
+from datetime import datetime
 
 
 def tests_test(test_number, experiment_id):
+    start_time = datetime.now()
     tests, targets = state_based.tests_from_file('./tests/01-test-test-case.yaml')
     test_id = database.test_add(experiment_id, test_number)
     print(''.join(['-' for _ in range(80)]))
@@ -13,16 +15,18 @@ def tests_test(test_number, experiment_id):
     myenv.wait_env(test_id)
     test_handler = state_based.TestHandler(tests, test_id, test_number)
     test_handler.targets = targets
-    myopenstack.build_tests(test_handler, tests, 'devstack-test', False)
+    myopenstack.build_tests(test_handler, tests, 'openstack', False)
     state_based.test_tests(tests,
-                           profile='devstack-test',
-                           state_monitor_function=myopenstack.StateMonitorFunction(test_handler, 'devstack-test').func,
+                           profile='openstack',
+                           state_monitor_function=myopenstack.StateMonitorFunction(test_handler, 'openstack').func,
                            test_handler=test_handler, ignore_falsification=False)
     myenv.wait_test_finish()
     if len(test_handler.exceptions) > 0:
         print('has exceptions')
         for exception in test_handler.exceptions:
             print(exception)
+    end_time = datetime.now()
+    print('Time: %s' % (end_time - start_time))
 
 
 def tests_test_forever():
