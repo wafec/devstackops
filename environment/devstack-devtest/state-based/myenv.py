@@ -141,22 +141,27 @@ def wait_init():
         print('env state = running')
 
 
-def _agent_send_output(service, output):
+class AgentOutputShared:
+    def __init__(self):
+        self.f_state = 0
+
+
+def _agent_send_output(service, output, shared):
     try:
         res = requests.post('http://' + PROFILE_CONFIG['env-api']['address'] + ':' + str(PROFILE_CONFIG['message-api']['port']) + '/outputs',
                             json={ 'output': output })
         if res.status_code == 200:
-            if f_state != 1:
+            if shared.f_state != 1:
                 print('output-api receiving')
-                f_state = 1
+                shared.f_state = 1
         else:
-            if f_state != 2:
+            if shared.f_state != 2:
                 print('output-api not receiving, code' % res.status_code)
-                f_state = 2
+                shared.f_state = 2
     except Exception as exc:
-        if f_state != 3:
+        if shared.f_state != 3:
             print('output-api not receiving, exception "%s"' % repr(exc))
-            f_state = 3
+            shared.f_state = 3
 
 
 
@@ -193,8 +198,8 @@ def agent_collect_outputs2(services):
     defaults = 'defaults.log'
     files = []
     for service in services:
-        if os.path.exists(os.path.join('/var/', service)):
-            service_files = [f for f in os.listdir(os.path.join('/var/', service)) if os.path.isfile(f)]
+        if os.path.exists(os.path.join('/var/log/', service)):
+            service_files = [f for f in os.listdir(os.path.join('/var/log/', service)) if os.path.isfile(f)]
             service_files = [f for f in service_files if f.endswith('.log')]
             files = files + service_files
     if files:
@@ -229,10 +234,10 @@ def agent_collect_outputs():
     if PROFILE_CONFIG is None:
         raise ValueError('Profile cannot be none')
 
-    f_state = 0
+    shared = AgentOutputShared()
 
     for output in agent_get_outputs():
-        _agent_send_output('syslog', output)
+        _agent_send_output('syslog', output, shared)
 
 
 def prepare_vars(profile):
@@ -274,5 +279,7 @@ if __name__ == '__main__':
             'nova',
             'cinder',
             'neutron',
-            'keystone'
+            'keystone',
+            'glance',
+            'placement'
         ])
