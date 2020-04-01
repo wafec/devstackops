@@ -29,16 +29,19 @@ def tests_test(test_number, experiment_id):
     print('Time: %s' % (end_time - start_time))
 
 
-def tests_test_forever():
+def tests_test_forever(max_test_count=100000):
     test_number = 2
-    experiment_id = 2
+    experiment_id = 1
     injection_count = database.injection_count_by_test_number(test_number)
     injection_count_aux = None
-    while injection_count != injection_count_aux:
+    test_count = 0
+    while injection_count != injection_count_aux and test_count < max_test_count:
+        print('forever count in %d' % test_count)
         injection_count_aux = injection_count
         print('my-tests having ' + str(injection_count_aux) + ' test(s)')
         tests_test(test_number, experiment_id)
         injection_count = database.injection_count_by_test_number(test_number)
+        test_count = test_count + 1
     print('test completed')
 
 
@@ -48,4 +51,4 @@ def tests_test_once():
     tests_test(test_number, experiment_id)
 
 
-tests_test_once()
+tests_test_forever(1)
