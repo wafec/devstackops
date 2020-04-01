@@ -8,6 +8,7 @@ import subprocess
 import yaml
 import logging
 import multiprocessing
+import os
 
 
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
@@ -140,6 +141,84 @@ def wait_init():
         print('env state = running')
 
 
+def _agent_send_output(service, output):
+    try:
+        res = requests.post('http://' + PROFILE_CONFIG['env-api']['address'] + ':' + str(PROFILE_CONFIG['message-api']['port']) + '/outputs',
+                            json={ 'output': output })
+        if res.status_code == 200:
+            if f_state != 1:
+                print('output-api receiving')
+                f_state = 1
+        else:
+            if f_state != 2:
+                print('output-api not receiving, code' % res.status_code)
+                f_state = 2
+    except Exception as exc:
+        if f_state != 3:
+            print('output-api not receiving, exception "%s"' % repr(exc))
+            f_state = 3
+
+
+
+def agent_get_file_outputs_parallel(lock, handler, filepath, defaultfilepath):
+    import sh
+    if not os.path.exists(filepath) or not os.path.exists(defaultfilepath) or not os.path.isfile(filepath) or not os.path.isfile(defaultfilepath):
+        print('Wow! Invalid arguments in get outputs parallel (%s, %s)' % (filepath, defaultfilepath))
+        return 
+    print('Listening (%s, %s)' % (filepath, defaultfilepath))
+    for line in sh.tail('-f', filepath, _iter=True):
+        with lock:
+            with open(defaultfilepath, 'a') as defaultf:
+                defaultf.write('%s\n' % (line))
+
+
+def agent_get_outputs_reporter_parallel(lock, handler, defaultfilepath):
+    import sh
+    if not os.path.exists(defaultfilepath) or not os.path.isfile(defaultfilepath):
+        print('Ops! Not a file in reporter parallel (%s)' % (defaultfilepath))
+        return
+    print('Listening defaults (%s)' % (defaultfilepath))
+    for line in sh.tail('-f', defaultfilepath, _iter=True):
+        div = line.find(" ")
+        service = line[:div]
+        output = line[div+1:]
+        _agent_send_output(service, output)
+
+
+def agent_collect_outputs2(services):
+    # TODO: multiprocessing
+    ps = []
+    lock = multiprocessing.Lock()
+    handler = multiprocessing.Event()
+    defaults = 'defaults.log'
+    files = []
+    for service in services:
+        if os.path.exists(os.path.join('/var/', service)):
+            service_files = [f for f in os.listdir(os.path.join('/var/', service)) if os.path.isfile(f)]
+            service_files = [f for f in service_files if f.endswith('.log')]
+            files = files + service_files
+    if files:
+        reporter = multiprocessing.Process(target=agent_get_outputs_reporter_parallel, args=(lock, handler, defaults))
+        ps.append(reporter)
+        for f in files:
+            print('Adding file %s' % f)
+            serviced = multiprocessing.Process(target=agent_get_file_outputs_paralell, args=(lock, handler, f, defaults))
+            ps.append(serviced)
+    if ps and len(ps) > 1:
+        print('Starting agent processes')
+        for p in ps:
+            p.start()
+    
+        try:
+            while True:
+                pass
+        except:
+            for p in ps:
+                p.terminate()
+    else:
+        print('Hmm. No process to start')
+
+
 def agent_get_outputs():
     import sh
     for line in sh.tail("-f", "/var/log/syslog", _iter=True):
@@ -153,21 +232,7 @@ def agent_collect_outputs():
     f_state = 0
 
     for output in agent_get_outputs():
-        try:
-            res = requests.post('http://' + PROFILE_CONFIG['env-api']['address'] + ':' + str(PROFILE_CONFIG['message-api']['port']) + '/outputs',
-                                json={ 'output': output })
-            if res.status_code == 200:
-                if f_state != 1:
-                    print('output-api receiving')
-                    f_state = 1
-            else:
-                if f_state != 2:
-                    print('output-api not receiving, code' % res.status_code)
-                    f_state = 2
-        except Exception as exc:
-            if f_state != 3:
-                print('output-api not receiving, exception "%s"' % repr(exc))
-                f_state = 3
+        _agent_send_output('syslog', output)
 
 
 def prepare_vars(profile):
@@ -190,7 +255,7 @@ def prepare_vars(profile):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
-    parser.add_argument('mode', type=str, choices=['server', 'client', 'agent'])
+    parser.add_argument('mode', type=str, choices=['server', 'client', 'agent', 'agent2'])
     parser.add_argument('--profile', type=str, required=False, default=None)
     args = parser.parse_args()
     if args.profile:
@@ -204,3 +269,10 @@ if __name__ == '__main__':
         wait_init()
     elif args.mode == 'agent':
         agent_collect_outputs()
+    elif args.mode == 'agent2':
+        agent_collect_outputs2([
+            'nova',
+            'cinder',
+            'neutron',
+            'keystone'
+        ])

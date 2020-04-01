@@ -143,8 +143,16 @@ def st_wait(times=20, interval=1):
                         status_ok = False
                         exc = state_exc
                         time.sleep(interval)
+                    except openstack.exceptions.SDKException as sdk_exception:
+                        status_ok = False
+                        exc = sdk_exception
+                        time.sleep(interval)
                     counter = counter + 1
             except ErrorStatusException as exc:
+                status_ok = False
+                exc = exc
+                time.sleep(interval)
+            except Exception as generic:
                 status_ok = False
                 exc = exc
                 time.sleep(interval)
@@ -273,14 +281,14 @@ def st_server_shelved(opts):
         raise StateMonitorException('server shelving invalid request')
 
 
-@st_wait(times=120)
+@st_wait(times=240)
 def st_server_unshelved(opts):
     test_handler, conn = opts['test_handler'], opts['conn']
     try:
         result = conn.compute.get_server(test_handler.instances['server_test'])
         if result and result.status and result.status.lower() == 'error':
             raise ServerErrorStatusException()
-        if result.status.lower() == 'active':
+        if result.status.lower() == 'active' and (result.task_state is None or result.task_state.lower() == 'none'):
             print('server active %s' % result.id)
         else:
             print(_dump_invalid_server_status(result))

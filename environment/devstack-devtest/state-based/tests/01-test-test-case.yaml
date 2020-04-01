@@ -85,7 +85,7 @@ test-case:
         value: server_test
     states:
       - name: server_paused
-    is_targeted: no
+    is_targeted: yes
   - event: compute.unpause_server
     args:
       - name: server
