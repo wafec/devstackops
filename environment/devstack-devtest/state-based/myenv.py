@@ -126,16 +126,18 @@ def _do_env_setup(flag=0x7):
         print('VMs started')
 
 
-def wait_init():
+def wait_init(ignore=False):
     while True:
         print('env waiting init')
         state = _wait_for_state(['init', 'terminated'], url())
         if state == 'terminated':
-            _do_env_setup(0x1)
+            if not ignore:
+                _do_env_setup(0x1)
             requests.put(url() + '?state=done')
             continue
         print('env init found')
-        _do_env_setup()
+        if not ignore:
+            _do_env_setup()
         requests.put(url() + '?state=env_up')
         print('env state = running')
 
@@ -192,6 +194,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('mode', type=str, choices=['server', 'client', 'agent'])
     parser.add_argument('--profile', type=str, required=False, default=None)
+    parser.add_argument('--ignore', action="store_true", default=False)
     args = parser.parse_args()
     if args.profile:
         prepare_vars(args.profile)
@@ -203,4 +206,4 @@ if __name__ == '__main__':
     elif args.mode == 'client':
         wait_init()
     elif args.mode == 'agent':
-        agent_collect_outputs()
+        agent_collect_outputs(args.ignore)
