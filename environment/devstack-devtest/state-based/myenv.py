@@ -125,9 +125,13 @@ def _do_env_setup(flag=0x7):
                 p.join()
             time.sleep(1)
         print('VMs started')
+        print('wait 10 seconds to VMs reduce CPU usage')
+        time.sleep(10)
 
 
 def wait_init(ignore=False):
+    if ignore:
+        print('ignore setup')
     while True:
         print('env waiting init')
         state = _wait_for_state(['init', 'terminated'], url())
@@ -263,8 +267,8 @@ def prepare_vars(profile):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('mode', type=str, choices=['server', 'client', 'agent', 'agent2'])
+    parser.add_argument('--ignore', action='store_true')
     parser.add_argument('--profile', type=str, required=False, default=None)
-    parser.add_argument('--ignore', action="store_true", default=False)
     args = parser.parse_args()
     if args.profile:
         prepare_vars(args.profile)
@@ -274,6 +278,7 @@ if __name__ == '__main__':
         api.add_resource(EnvService, '/env')
         app.run(port=EXTERNAL_PORT, host='0.0.0.0')
     elif args.mode == 'client':
-        wait_init()
+        wait_init(args.ignore)
     elif args.mode == 'agent':
-        agent_collect_outputs(args.ignore)
+        agent_collect_outputs()
+

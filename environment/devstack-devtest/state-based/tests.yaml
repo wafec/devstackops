@@ -70,7 +70,7 @@ tests:
       address: 192.168.56.114
       devices:
       - name: openstack_controller_2
-        snapshot: no_upgrade
+        snapshot: logs
         priority: 1
       - name: openstack_compute1_2
         snapshot: no_upgrade
